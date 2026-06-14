@@ -20,18 +20,34 @@ pnpm dev               # arranca todo (turbo)
 
 ## Estructura
 
-| Carpeta | Contenido |
-|---------|-----------|
-| `apps/web/` | Next.js 15 (PWA) |
-| `apps/game-server/` | Colyseus (rooms authoritative) |
-| `packages/game-engine/` | Phaser 3 |
-| `packages/ai-gateway/` | Proveedores LLM / imagen / TTS |
-| `packages/ui/` | Componentes shadcn compartidos |
-| `packages/types/` | Tipos compartidos |
-| `packages/db/` | Supabase schema + migraciones |
-| `packages/config/` | ESLint / TS / Prettier compartidos |
+| Carpeta                 | Contenido                          |
+| ----------------------- | ---------------------------------- |
+| `apps/web/`             | Next.js 15 (PWA)                   |
+| `apps/game-server/`     | Colyseus (rooms authoritative)     |
+| `packages/game-engine/` | Phaser 3                           |
+| `packages/ai-gateway/`  | Proveedores LLM / imagen / TTS     |
+| `packages/ui/`          | Componentes shadcn compartidos     |
+| `packages/types/`       | Tipos compartidos                  |
+| `packages/db/`          | Supabase schema + migraciones      |
+| `packages/config/`      | ESLint / TS / Prettier compartidos |
 
 Ver `docs/` para arquitectura, roadmap, convenciones y briefings por agente.
+
+## Comandos
+
+```bash
+pnpm dev          # arranca todo en paralelo (turbo)
+pnpm build        # build de todos los paquetes y apps
+pnpm test         # tests (vitest) de todo el workspace
+pnpm lint         # eslint
+pnpm typecheck    # tsc --noEmit
+pnpm format       # prettier --write
+
+# Por paquete
+pnpm --filter @quanta/web dev           # Next.js en :3000
+pnpm --filter @quanta/game-server dev   # Colyseus en :2567
+pnpm --filter @quanta/db db:start       # Supabase local (requiere Docker)
+```
 
 ## Workflow
 

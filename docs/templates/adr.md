@@ -29,12 +29,15 @@
 ### Consecuencias
 
 **Positivas:**
+
 - <consecuencia 1>
 
 **Negativas / trade-offs:**
+
 - <consecuencia 1>
 
 **Neutras:**
+
 - <consecuencia 1>
 
 ### Acciones derivadas

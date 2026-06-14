@@ -1,6 +1,7 @@
 # Tasks — Cola priorizada
 
 > **Cómo se usa:**
+>
 > - Cada task sigue el formato de `templates/task.md`.
 > - Solo el **Coordinador** crea, prioriza, asigna y borra tasks.
 > - Especialistas SOLO cambian el campo `status` de su propia task (`pending` → `in_progress` → `done`).
@@ -13,8 +14,9 @@
 ## Pendientes / En progreso
 
 ### T001 — Scaffolding monorepo (pnpm + Turborepo)
+
 - **Owner:** coordinator
-- **Status:** in_progress (pausada por B001: falta Node + pnpm)
+- **Status:** done (2026-04-19) — `pnpm install/lint/typecheck/test/build` verdes
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** —
@@ -26,8 +28,9 @@
 - **Notes:** Coordinator hace este por bootstrapping; después de T001 los especialistas arrancan.
 
 ### T002 — CI básica en GitHub Actions
+
 - **Owner:** coordinator
-- **Status:** pending
+- **Status:** done (2026-04-19) — `.github/workflows/ci.yml`: install --frozen-lockfile → lint → typecheck → test → build
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** T001
@@ -35,8 +38,9 @@
 - **Acceptance:** PR de prueba pasa por los 4 checks.
 
 ### T003 — Skeleton apps/web (Next.js 15)
+
 - **Owner:** ui-web
-- **Status:** pending
+- **Status:** done (2026-04-19) — dev sirve la landing `<h1>Quanta</h1>` en :3000, `build` genera estáticos OK
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** T001
@@ -46,8 +50,9 @@
   - `pnpm --filter @quanta/web build` produce build estática sin errores.
 
 ### T004 — Skeleton apps/game-server (Colyseus)
+
 - **Owner:** backend-realtime
-- **Status:** pending
+- **Status:** done (2026-04-19) — `LobbyRoom` con heartbeat; test de integración conecta vía WS y recibe broadcast
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** T001
@@ -57,8 +62,9 @@
   - Cliente test (script en `tests/`) se conecta y recibe broadcast.
 
 ### T005 — Skeleton packages/game-engine (Phaser)
+
 - **Owner:** game-engine
-- **Status:** pending
+- **Status:** done (2026-04-19) — `BootScene` + `createGameConfig`; build genera bundle (esm+cjs+dts); tests verdes
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** T001
@@ -68,8 +74,9 @@
   - Tests vacíos corren (`pnpm --filter @quanta/game-engine test`).
 
 ### T006 — Skeleton packages/ai-gateway
+
 - **Owner:** ai-gateway
-- **Status:** pending
+- **Status:** done (2026-04-19) — estructura providers/cache/prompts/chain/config; tests de fallback y cache verdes
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** T001
@@ -79,8 +86,9 @@
   - Build sin errores.
 
 ### T007 — Skeleton packages/db (esquema + migración inicial)
+
 - **Owner:** backend-realtime
-- **Status:** pending
+- **Status:** done (parcial, 2026-04-19) — migración `0001_initial_schema.sql` (8 tablas + RLS + triggers + índices) escrita y el paquete typechea; verificación runtime (`db:start`/`db:migrate`/`db:gen-types`) **bloqueada por B002 (Docker)**
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** T001

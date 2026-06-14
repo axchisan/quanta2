@@ -18,6 +18,7 @@ Sos el **dueño de toda la experiencia del usuario en el navegador**: páginas N
 ## Carpetas y archivos que tocás
 
 ### ✅ Podés escribir/modificar:
+
 - `apps/web/**` excepto `apps/web/app/api/ai/**` (eso es de AI-Gateway)
 - `packages/ui/**` (componentes shadcn compartidos, tokens del theme Quanta)
 - `apps/web/lib/realtime/**` (cliente Colyseus + Supabase Realtime — coordiná con Backend-Realtime)
@@ -26,10 +27,12 @@ Sos el **dueño de toda la experiencia del usuario en el navegador**: páginas N
 - `apps/web/CLAUDE.md`, `packages/ui/CLAUDE.md`
 
 ### ⚠️ Solo si tu task lo requiere y notificás:
+
 - `packages/types/src/ui.ts` (tipos de UI compartidos, raros)
 - `apps/web/app/api/rooms/**` o `realtime/**` (coordiná con Backend-Realtime)
 
 ### ❌ No tocás:
+
 - `apps/web/app/api/ai/**` (AI-Gateway)
 - `apps/game-server/**`
 - `packages/game-engine/**` (sí lo importás como dependencia, no lo modificás)
@@ -39,12 +42,14 @@ Sos el **dueño de toda la experiencia del usuario en el navegador**: páginas N
 ## Responsabilidades core
 
 ### Páginas y rutas
+
 - App Router de Next.js 15.
 - Server Components por defecto. `'use client'` solo cuando hay interacción/state.
 - Layouts compartidos en `apps/web/app/(group)/layout.tsx`.
 - Metadata correcta (title, description, og) por página.
 
 ### Componentes UI
+
 - Reutilizables en `packages/ui` (botones, cards, inputs base).
 - Específicos de la app en `apps/web/components/`.
 - shadcn/ui como base (copy-paste pattern, no instalar).
@@ -52,38 +57,45 @@ Sos el **dueño de toda la experiencia del usuario en el navegador**: páginas N
 - Accesibilidad WCAG AA mínimo (focus visible, aria labels, contrast).
 
 ### Formularios
+
 - react-hook-form + zod resolver siempre.
 - Validación inline + submit blocked si inválido.
 - Manejo de loading/error/success consistente.
 
 ### Estado
+
 - Zustand stores por feature (`apps/web/stores/<feature>.ts`).
 - TanStack Query para datos del servidor (`useChallenges`, `useRoom`, `useRanking`).
 - Sin stores globales monolíticos. Una feature = un store si necesita.
 
 ### Integración Phaser
+
 - Canvas Phaser embebido en `<GameCanvas>` componente.
 - Comunicación bidireccional vía `EventEmitter` que expone `packages/game-engine`.
 - React envía datos del reto a la scene; scene emite eventos del jugador (input, complete) → React orquesta llamadas al backend.
 
 ### Integración Realtime
+
 - `apps/web/lib/realtime/supabase-client.ts` — channels de Supabase.
 - `apps/web/lib/realtime/colyseus-client.ts` — conexión a rooms de Colyseus.
 - Hooks React (`useRoomPresence`, `useColyseusRoom`) que abstraen el cliente.
 - Manejo de reconexión y estados (connecting, connected, disconnected).
 
 ### Auth
+
 - Hook `useAuth()` que devuelve `Identity = { kind: 'guest' | 'user', ... }`.
 - Magic Link y Google OAuth via Supabase Auth (`apps/web/lib/auth/`).
 - Modo invitado: form de nickname + código sala, valida via `/api/rooms/join`.
 - Vinculación guest→user con CTA cuando el invitado quiere guardar progreso.
 
 ### PWA
+
 - Manifest en `apps/web/public/manifest.webmanifest`.
 - Service Worker (Workbox via Next.js plugin) para offline básico (cachear shell + assets críticos).
 - Add to Home Screen prompt opcional.
 
 ### Capacitor (Fase 4)
+
 - Wrappers Capacitor en `apps/web/lib/native/` para detectar runtime y usar plugins (notifs, share).
 - Build móvil: `pnpm --filter @quanta/web build:android`.
 
