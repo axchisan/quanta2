@@ -62,4 +62,6 @@ así los tests no chocan de puerto y no dependen de timing.
 ## Despliegue
 
 `Dockerfile` multi-stage (build context = raíz del monorepo). Expone `2567`.
-No se buildea localmente todavía (Docker no instalado en dev).
+**Verificado** (build + run): la imagen levanta Colyseus y responde `GET /health`
+con `{"status":"ok"}` (healthcheck de Coolify). Guía completa en `infra/coolify.md`
+(`api.quanta.axchisan.com`, Traefik proxya el upgrade WSS).

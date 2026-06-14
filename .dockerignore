@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+.git
+.github
+**/.env
+**/.env.local
+**/*.local
+packages/db/supabase/.branches
+packages/db/supabase/.temp
+*.log

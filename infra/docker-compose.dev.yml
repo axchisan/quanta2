@@ -1,11 +1,22 @@
-# Compose de desarrollo para validar el empaquetado Docker.
+# Compose de desarrollo para validar el empaquetado Docker de las apps.
 # Build context = raíz del monorepo (necesita el workspace pnpm).
 #   docker compose -f infra/docker-compose.dev.yml up --build
 #
-# Supabase NO está acá: se levanta con `pnpm --filter @quanta/db db:start`.
-# El servicio `web` se añade cuando exista `apps/web/Dockerfile` (backlog).
+# Supabase NO está acá: se levanta aparte con `pnpm --filter @quanta/db db:start`.
+# Ambas imágenes están verificadas (build + run) con Docker 29.5.
 
 services:
+  web:
+    container_name: quanta-web
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    environment:
+      PORT: 3000
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+
   game-server:
     container_name: quanta-game-server
     build:
