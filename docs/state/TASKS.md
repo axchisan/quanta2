@@ -101,7 +101,16 @@
 
 ## Done
 
-(Vacío — el sprint apenas arranca.)
+### T008 — Entrada de invitado + Lobby (Fase 1)
+
+- **Owner:** ui-web
+- **Status:** done (2026-06-14)
+- **Priority:** P0
+- **Sprint:** 1
+- **Description:** Vertical slice de entrada: crear sala (código) / unirse con nickname+código → lobby con presencia en vivo. API routes `app/api/rooms/{create,join,[code]}` (service role, Zod), clientes Supabase (reusa `@quanta/db`), store zustand persistido, `useRoomPresence` (Supabase Realtime), componente `Input` en `@quanta/ui`, páginas landing + `/room/[code]`.
+- **Acceptance:**
+  - Crear→unirse→snapshot verificado **contra el Supabase de producción** (`db.quanta.axchisan.com`): filas en `rooms`/`guest_sessions`/`room_memberships`, nickname repetido→409, código inexistente→404.
+  - `lint/typecheck/test/build` verdes; landing y lobby renderizan.
 
 ---
 
