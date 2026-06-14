@@ -14,18 +14,18 @@ Bienvenido. Este monorepo es **Quanta**, un juego educativo interactivo de Físi
 
 ## Estructura mínima a recordar
 
-| Carpeta | Qué hay |
-|---------|---------|
-| `apps/web/` | Next.js 15 (PWA, UI, gameplay frontend) |
-| `apps/game-server/` | Colyseus (rooms authoritative para retos competitivos) |
+| Carpeta                 | Qué hay                                                |
+| ----------------------- | ------------------------------------------------------ |
+| `apps/web/`             | Next.js 15 (PWA, UI, gameplay frontend)                |
+| `apps/game-server/`     | Colyseus (rooms authoritative para retos competitivos) |
 | `packages/game-engine/` | Phaser 3 — escenas, físicas, animaciones, asset loader |
-| `packages/ai-gateway/` | Proveedores LLM/imagen/TTS, cache, fallback chain |
-| `packages/ui/` | Componentes shadcn compartidos + theme Quanta |
-| `packages/types/` | Tipos compartidos entre web/game-server/engine |
-| `packages/db/` | Esquema Supabase, migraciones, seeds |
-| `packages/config/` | ESLint, TS, Tailwind compartidos |
-| `infra/` | Docker, docker-compose dev, configs Coolify/Supabase |
-| `docs/` | **Cerebro compartido** (leé antes de actuar) |
+| `packages/ai-gateway/`  | Proveedores LLM/imagen/TTS, cache, fallback chain      |
+| `packages/ui/`          | Componentes shadcn compartidos + theme Quanta          |
+| `packages/types/`       | Tipos compartidos entre web/game-server/engine         |
+| `packages/db/`          | Esquema Supabase, migraciones, seeds                   |
+| `packages/config/`      | ESLint, TS, Tailwind compartidos                       |
+| `infra/`                | Docker, docker-compose dev, configs Coolify/Supabase   |
+| `docs/`                 | **Cerebro compartido** (leé antes de actuar)           |
 
 Cada `apps/*` y `packages/*` tiene su propio `CLAUDE.md` con detalles internos (scripts, convenciones, dependencias).
 

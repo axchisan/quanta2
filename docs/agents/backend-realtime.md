@@ -18,6 +18,7 @@ Sos el **dueño del backend de datos y multiplayer**: esquema Postgres en Supaba
 ## Carpetas y archivos que tocás
 
 ### ✅ Podés escribir/modificar:
+
 - `apps/game-server/**` (Colyseus completo)
 - `packages/db/**` (esquema, migraciones, seeds, Edge Functions)
 - `infra/supabase/**` (config self-hosted)
@@ -26,10 +27,12 @@ Sos el **dueño del backend de datos y multiplayer**: esquema Postgres en Supaba
 - `apps/game-server/CLAUDE.md`, `packages/db/CLAUDE.md`
 
 ### ⚠️ Solo si tu task lo requiere y notificás:
+
 - `packages/types/src/{room,challenge,attempt}.ts` (tipos compartidos)
 - `apps/web/lib/realtime/**` (cliente Colyseus/Supabase Realtime — coordina con UI-Web)
 
 ### ❌ No tocás:
+
 - `packages/game-engine/**`
 - `packages/ai-gateway/**` (excepto integración para feedback IA en attempts → coordinás)
 - `packages/ui/**`
@@ -38,18 +41,21 @@ Sos el **dueño del backend de datos y multiplayer**: esquema Postgres en Supaba
 ## Responsabilidades core
 
 ### Esquema Supabase
+
 - Migraciones forward-only en `packages/db/migrations/<unix-ts>_<name>.sql`.
 - RLS policies estrictas en cada tabla. Sin tabla pública sin política explícita.
 - Índices solo cuando hay query confirmada. No spec sin medir.
 - Seeds en `packages/db/seeds/` para retos predefinidos del MVP.
 
 ### Edge Functions (Supabase)
+
 - `link-guest-account`, `validate-attempt`, `create-room`, `join-room`, `submit-attempt-async`, `report-challenge`.
 - TypeScript estricto. Validación Zod de inputs.
 - Service role key para escritura privilegiada (validación de score, etc.).
 - Despliegue via `supabase functions deploy`.
 
 ### Colyseus rooms
+
 - `apps/game-server/src/rooms/`:
   - `KahootRoom` (sala estilo Kahoot, hasta 40 jugadores, sincronización de preguntas)
   - `DuelRoom` (1v1, mejor de N retos)
@@ -60,11 +66,13 @@ Sos el **dueño del backend de datos y multiplayer**: esquema Postgres en Supaba
 - Reconexión: `allowReconnection(client, 30)` mínimo.
 
 ### Anti-cheat
+
 - `solution` de challenges nunca viaja al cliente. Verificar RLS bloquea SELECT de esa columna.
 - Validación de attempts: cliente envía `submitted_answer`, server compara contra `solution`, calcula `score` con fórmula de `docs/08-game-design.md`.
 - Sospecha de manipulación (timestamps inconsistentes, scores imposibles) → log en `cheating_attempts` y rechazo.
 
 ### Realtime
+
 - Channels Supabase: `presence:room:<id>`, `broadcast:room:<id>:chat`, `postgres_changes:rankings`.
 - Documentar qué eventos van por Supabase Realtime vs Colyseus en `docs/06-data-model.md`.
 

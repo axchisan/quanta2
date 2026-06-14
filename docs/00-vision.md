@@ -10,13 +10,13 @@ El profesor de la hermana del usuario (que termina colegio este año, planea est
 
 ## Problemas que resuelve
 
-| Problema | Cómo lo aborda Quanta |
-|----------|-----------------------|
+| Problema                                                  | Cómo lo aborda Quanta                                                                        |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | Aprender Física/Química desde libros es árido y abstracto | Retos interactivos con simulaciones visuales (caída libre, balanceo de ecuaciones, vectores) |
-| Los juegos educativos típicos se vuelven monótonos | Herramienta integrada para crear retos nuevos con IA, sin programación |
-| Estudiar solo es desmotivante | Salas multijugador, ranking, duelos, modos cooperativos y torneos asincrónicos |
-| Las plataformas comerciales son de pago o limitadas | 100% gratis, self-hosted, sin trackers, datos en VPS propio |
-| Feedback "respuesta correcta/incorrecta" no enseña | LLM analiza la respuesta y explica el error reforzando el concepto |
+| Los juegos educativos típicos se vuelven monótonos        | Herramienta integrada para crear retos nuevos con IA, sin programación                       |
+| Estudiar solo es desmotivante                             | Salas multijugador, ranking, duelos, modos cooperativos y torneos asincrónicos               |
+| Las plataformas comerciales son de pago o limitadas       | 100% gratis, self-hosted, sin trackers, datos en VPS propio                                  |
+| Feedback "respuesta correcta/incorrecta" no enseña        | LLM analiza la respuesta y explica el error reforzando el concepto                           |
 
 ## Audiencia
 
@@ -35,15 +35,18 @@ El profesor de la hermana del usuario (que termina colegio este año, planea est
 ## Criterios de éxito
 
 ### Mínimo (Fase 1 / MVP)
+
 - [ ] La hermana puede compartir una URL con su profesor y demostrarle 3 retos jugables en celular o PC.
 - [ ] Los retos tienen feedback de IA (no solo "correcto/incorrecto").
 - [ ] La experiencia visual y sonora se siente cuidada (no parece un prototipo de hackathon).
 
 ### Medio (Fase 2-3)
+
 - [ ] Compañeros de clase entran a una sala y compiten en vivo (≥10 jugadores estables).
 - [ ] La hermana crea un reto nuevo con la herramienta de IA en menos de 5 minutos y lo juega con sus amigos esa misma tarde.
 
 ### Ambicioso (Fase 4)
+
 - [ ] Curso entero (40 alumnos) participa en un torneo semanal con ranking persistente.
 - [ ] Otro profesor ve el juego y pide usarlo en su clase.
 - [ ] Quanta sigue funcionando 6 meses después sin intervención técnica del usuario.

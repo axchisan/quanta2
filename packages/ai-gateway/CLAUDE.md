@@ -1,0 +1,50 @@
+# `@quanta/ai-gateway` — Gateway de IA generativa
+
+Única vía por la que el resto del sistema toca proveedores externos de IA (LLM, imagen, TTS).
+Cache + fallback chain + moderación + métricas viven acá. Leé `docs/07-ai-strategy.md` y
+`docs/agents/ai-gateway.md` antes de tocar.
+
+> Estado actual (T006): esqueleto con **fallback-chain y cache reales** pero **providers STUB**
+> (sin HTTP todavía). Los providers reales (Gemini/Groq/OpenRouter, Pollinations/HF, ElevenLabs/Coqui)
+> llegan en tasks posteriores.
+
+## Estructura
+
+| Ruta                     | Qué hay                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| `src/index.ts`           | API pública: `AIGateway`, `createAIGateway(deps)`.                                   |
+| `src/chain.ts`           | `runTextChain` — intenta providers en orden, fallback, logging.                      |
+| `src/config.ts`          | `GatewayConfig`, orden de providers por feature, timeouts (env vía `parseEnv`).      |
+| `src/providers/types.ts` | Interfaces `TextProvider`/`ImageProvider`/`AudioProvider` + clases de error tipadas. |
+| `src/cache/`             | `AICache` (interface), `MemoryCache` (Map, tests), `hashKey` (FNV-1a normalizado).   |
+| `src/prompts/`           | Builders puros de prompts con guardrails educativos (español neutro).                |
+| `tests/`                 | Mocks de providers + tests de fallback y cache.                                      |
+
+## Reglas del paquete
+
+- TS estricto: `import type` para tipos, sin `any`, sin `as` salvo boundaries de SDK externo.
+- Reutilizá los tipos de `@quanta/types` (`AIRequest`/`AIResponse`/`ProviderId`/`AIFeature`/...).
+  No los redefinas.
+- Validación Zod de todo input/output externo (los providers reales devuelven cualquier cosa).
+- Prompts = código, viven en `src/prompts/`. Cambios significativos → `state/DECISIONS.md`.
+- Sin API keys hardcodeadas: todo via env validado.
+
+## Scripts
+
+```bash
+pnpm --filter @quanta/ai-gateway test       # vitest (fallback + cache)
+pnpm --filter @quanta/ai-gateway typecheck
+pnpm --filter @quanta/ai-gateway lint
+pnpm --filter @quanta/ai-gateway build       # tsup esm+cjs+dts
+```
+
+## Variables de entorno
+
+| Var                           | Default | Uso                |
+| ----------------------------- | ------- | ------------------ |
+| `AI_GATEWAY_TEXT_TIMEOUT_MS`  | `30000` | Timeout de texto.  |
+| `AI_GATEWAY_IMAGE_TIMEOUT_MS` | `60000` | Timeout de imagen. |
+| `AI_GATEWAY_AUDIO_TIMEOUT_MS` | `30000` | Timeout de TTS.    |
+
+Las API keys de cada provider (`GEMINI_API_KEY`, `GROQ_API_KEY`, ...) se añaden con sus
+implementaciones reales.

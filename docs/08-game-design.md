@@ -25,11 +25,13 @@ score = 0                                             // si !is_correct (sin pen
 ## Modos de juego
 
 ### Modo Solo (Fase 1)
+
 - Estudiante elige un reto del catálogo o juega un "Random Challenge".
 - Recibe puntaje y feedback al instante.
 - Puede reintentar (sin acumular score si ya lo resolvió bien antes).
 
 ### Sala Kahoot (Fase 2)
+
 - Anfitrión crea sala con código → comparte URL/QR.
 - Hasta 40 jugadores entran como invitados.
 - Anfitrión arranca → cada reto aparece simultáneamente, cuenta regresiva (típicamente 30-60s).
@@ -37,17 +39,20 @@ score = 0                                             // si !is_correct (sin pen
 - Final: leaderboard final, MVP, retos más fallados.
 
 ### Duelo 1v1 (Fase 2)
+
 - Dos jugadores se invitan (código directo) o matchmaking aleatorio.
 - Mejor de 5 retos, alterna quien elige tema/dificultad.
 - Ranking de duelos personal (Elo-like simple).
 
 ### Misiones cooperativas (Fase 4)
+
 - 2-4 jugadores resuelven juntos un reto compuesto. Ej:
   - **Circuito Eléctrico**: cada jugador tiene un componente, deben armar el circuito en orden correcto.
   - **Reacción en Cadena**: cada jugador balancea una parte de una serie de ecuaciones químicas.
 - Ganan o pierden todos juntos. Refuerza trabajo en equipo.
 
 ### Torneo / Liga asincrónica (Fase 4)
+
 - Ronda semanal: cada jugador puede jugar N retos (limitado para evitar grindeo) entre lunes y domingo.
 - Ranking global con badges (Top 10, Top 50%, Participante).
 - Histórico visible en perfil.
@@ -59,6 +64,7 @@ score = 0                                             // si !is_correct (sin pen
 **Concepto:** estudiante explora cinemática variando altura inicial y observando tiempo de caída.
 
 **Mecánica:**
+
 - Phaser scene con un objeto (manzana sprite) en la cima de una torre.
 - Slider para altura inicial (5m - 100m).
 - Slider para gravedad (1 - 20 m/s²) — incluye gravedad de Tierra, Luna, Marte como presets.
@@ -67,6 +73,7 @@ score = 0                                             // si !is_correct (sin pen
 - Validación: error <10% = correcto. Feedback con la fórmula `t = sqrt(2h/g)` y comparación numérica.
 
 **Assets:**
+
 - Sprite manzana/objeto (puede ser generado por IA).
 - Fondo torre.
 - Sonido caída (whoosh) y impacto (thud).
@@ -81,6 +88,7 @@ score = 0                                             // si !is_correct (sin pen
 **Concepto:** drag & drop de coeficientes para balancear una ecuación química.
 
 **Mecánica:**
+
 - React UI dentro de Phaser (o overlay): ecuación visible (ej: `__ H2 + __ O2 → __ H2O`).
 - Cada espacio recibe un coeficiente arrastrable de un palette (1, 2, 3, 4, 5, 6).
 - Validación visual en tiempo real: átomos a izquierda y derecha se cuentan y colorean (verde si balancea, rojo si no).
@@ -88,6 +96,7 @@ score = 0                                             // si !is_correct (sin pen
 - 3 ecuaciones progresivas en el reto (combustión metano, descomposición, síntesis).
 
 **Assets:**
+
 - Iconos de elementos (H, O, C, N, etc.) con colores estándar IUPAC.
 - Sonido drop, sonido success.
 
@@ -100,6 +109,7 @@ score = 0                                             // si !is_correct (sin pen
 **Concepto:** pregunta de opción múltiple generada por IA con feedback educativo.
 
 **Mecánica:**
+
 - Estudiante elige tema (Cinemática, Dinámica, Energía, Reacciones, Estructura Atómica) y dificultad (Easy/Medium/Hard).
 - Cliente llama a `POST /api/ai/generate-trivia`.
 - AI Gateway → Gemini con prompt:
@@ -117,6 +127,7 @@ score = 0                                             // si !is_correct (sin pen
 - Score: 100/200/400 + time bonus + streak.
 
 **Assets:**
+
 - Opcional: ilustración generada por IA del concepto si dificultad >=medium.
 - Audio narración opcional.
 
@@ -125,6 +136,7 @@ score = 0                                             // si !is_correct (sin pen
 ## Estructura `challenges.payload` por kind
 
 ### `kind: 'simulation'` (caída libre)
+
 ```json
 {
   "type": "free_fall",
@@ -138,6 +150,7 @@ score = 0                                             // si !is_correct (sin pen
 ```
 
 ### `kind: 'drag_drop'` (balanceo)
+
 ```json
 {
   "type": "equation_balance",
@@ -149,6 +162,7 @@ score = 0                                             // si !is_correct (sin pen
 ```
 
 ### `kind: 'multiple_choice'` (trivia)
+
 ```json
 {
   "type": "multiple_choice",
@@ -159,6 +173,7 @@ score = 0                                             // si !is_correct (sin pen
 ```
 
 ### `solution` (server-only)
+
 ```json
 // para simulation
 { "formula": "sqrt(2*h/g)", "tolerance_pct": 10 }
@@ -173,6 +188,7 @@ score = 0                                             // si !is_correct (sin pen
 ## Catálogo de temas (etiquetas oficiales)
 
 ### Física
+
 - `kinematics` (cinemática)
 - `dynamics` (dinámica, fuerzas)
 - `energy` (energía, trabajo, potencia)
@@ -183,6 +199,7 @@ score = 0                                             // si !is_correct (sin pen
 - `optics`
 
 ### Química
+
 - `atomic_structure` (estructura atómica)
 - `periodic_table`
 - `chemical_bonds` (enlaces)
@@ -193,6 +210,7 @@ score = 0                                             // si !is_correct (sin pen
 - `organic_chemistry`
 
 ### Mixto
+
 - `units_conversion`
 - `scientific_notation`
 
