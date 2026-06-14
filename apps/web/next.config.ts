@@ -7,7 +7,7 @@ const config: NextConfig = {
   // de los workspace packages (@quanta/*) al bundle standalone.
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, '../../'),
-  transpilePackages: ['@quanta/ui', '@quanta/types'],
+  transpilePackages: ['@quanta/ui', '@quanta/types', '@quanta/db'],
 };
 
 export default config;
