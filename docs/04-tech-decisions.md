@@ -16,9 +16,10 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Decisión:** Web (Next.js + PWA) como base. Capacitor para empaquetar APK/IPA cuando se necesite distribución más formal. Mismo código fuente.
 
 **Alternativas:**
-- *Solo web*: limita iOS PWA features, sin presencia en stores.
-- *Móvil nativo (Flutter/React Native)*: imposible compartir por URL, fricción para que cada compañero entre.
-- *Desktop (Electron/Tauri)*: requiere instalación, casi nadie va a instalarlo.
+
+- _Solo web_: limita iOS PWA features, sin presencia en stores.
+- _Móvil nativo (Flutter/React Native)_: imposible compartir por URL, fricción para que cada compañero entre.
+- _Desktop (Electron/Tauri)_: requiere instalación, casi nadie va a instalarlo.
 
 **Consecuencias:** Una sola base de código. PWA es la primary path; Capacitor se activa en Fase 4. Hay que cuidar que las APIs usadas funcionen en PWA y en webview de Capacitor (ej: cuidado con `localStorage` vs `IndexedDB`).
 
@@ -34,10 +35,11 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Decisión:** Phaser 3 para el canvas de juego. React (vía portal o div separado) para UI/menús/HUD encima. `packages/game-engine` exporta scenes y un `EventEmitter` para comunicación bidireccional con React.
 
 **Alternativas:**
-- *PixiJS + Matter.js*: más bajo nivel, requiere armar game loop y asset loader, más boilerplate.
-- *Three.js / R3F*: 3D, sobre-ingeniería para retos 2D.
-- *Solo Canvas/SVG con Framer Motion*: muy limitado para físicas y animaciones complejas.
-- *Cocos Creator / Construct*: editores visuales que rompen el flujo de código + git + multi-agente.
+
+- _PixiJS + Matter.js_: más bajo nivel, requiere armar game loop y asset loader, más boilerplate.
+- _Three.js / R3F_: 3D, sobre-ingeniería para retos 2D.
+- _Solo Canvas/SVG con Framer Motion_: muy limitado para físicas y animaciones complejas.
+- _Cocos Creator / Construct_: editores visuales que rompen el flujo de código + git + multi-agente.
 
 **Consecuencias:** Curva de aprendizaje moderada (Phaser tiene su propio EventEmitter, lifecycle, asset loader). Aislamos bien con `packages/game-engine` para que React no importe Phaser directamente.
 
@@ -53,10 +55,11 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Decisión:** Supabase **self-hosted** en el VPS Coolify del usuario (`coolify.axchisan.com`, `147.93.178.204`). Usamos Postgres + Auth + Realtime + Storage + Edge Functions.
 
 **Alternativas:**
-- *Supabase cloud free tier*: rápido de arrancar pero datos en su cloud y límites estrictos.
-- *Firebase*: NoSQL, menos flexible para queries complejas de stats. Menos ergonómico para un developer con expertise en SQL.
-- *PocketBase*: más simple pero menos features (sin Postgres, RLS más básico).
-- *Backend propio Node + Postgres + Socket.IO*: mucho más código, mantenimiento.
+
+- _Supabase cloud free tier_: rápido de arrancar pero datos en su cloud y límites estrictos.
+- _Firebase_: NoSQL, menos flexible para queries complejas de stats. Menos ergonómico para un developer con expertise en SQL.
+- _PocketBase_: más simple pero menos features (sin Postgres, RLS más básico).
+- _Backend propio Node + Postgres + Socket.IO_: mucho más código, mantenimiento.
 
 **Consecuencias:** Mantenimiento del Supabase self-hosted recae en el usuario (backups, updates de imagen Docker). A cambio: control total, costo $0, datos en VPS propio. Si algún día se quiere migrar a Supabase cloud, el código cliente no cambia.
 
@@ -70,13 +73,15 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Contexto:** Necesitamos tres tipos de comunicación en tiempo real: (1) presencia y broadcast de eventos sociales (chat de sala, quien está conectado, ranking que actualiza), (2) lógica authoritative de retos competitivos (anti-cheat, sincronización estricta de estado del juego), (3) persistencia de resultados.
 
 **Decisión:** Híbrido por tipo de interacción.
+
 - **Supabase Realtime**: presence, broadcast (chat, eventos UI), `postgres_changes` (rankings que se persisten).
 - **Colyseus** (self-hosted en Coolify): rooms para retos competitivos, estado authoritative server-side, validación de respuestas, cálculo de puntaje.
 
 **Alternativas:**
-- *Solo Supabase Realtime*: no tiene primitiva de "estado authoritative del room"; reimplementarlo con functions sería frágil.
-- *Solo Colyseus*: tendríamos que reimplementar persistencia y broadcast social que Supabase ya da gratis.
-- *Socket.IO custom*: máxima flexibilidad pero todo a mano (rooms, reconexión, anti-cheat).
+
+- _Solo Supabase Realtime_: no tiene primitiva de "estado authoritative del room"; reimplementarlo con functions sería frágil.
+- _Solo Colyseus_: tendríamos que reimplementar persistencia y broadcast social que Supabase ya da gratis.
+- _Socket.IO custom_: máxima flexibilidad pero todo a mano (rooms, reconexión, anti-cheat).
 
 **Consecuencias:** Dos sistemas de websockets simultáneos en el cliente. Aislar bien con un `RealtimeManager` que sabe cuándo usar cada uno. Más complejidad inicial pero mejor separación de responsabilidades.
 
@@ -90,14 +95,16 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Contexto:** Tres casos de uso: (a) profesor proyecta una sala en clase y los estudiantes deben entrar en 30s sin registrarse, (b) tu hermana y amigos quieren guardar progreso y competir entre sesiones, (c) creación de retos requiere identidad para ownership y moderación.
 
 **Decisión:**
+
 - **Modo invitado:** nickname + código de sala. Sin email, sin password. Sesión persistida en `localStorage` con UUID generado en el cliente, validado server-side. Datos en tabla `guest_sessions`.
 - **Cuenta completa:** Magic Link + Google OAuth (Supabase Auth). Habilita historial, ranking persistente, creación de retos.
 - **Vinculación:** un invitado puede crear cuenta y migrar su `guest_session` (Edge Function `link-guest-account`).
 
 **Alternativas:**
-- *Solo cuentas*: fricción inaceptable en aula.
-- *Solo invitados*: no hay continuidad, no hay creador de retos.
-- *Email + password clásico*: peor UX para estudiantes.
+
+- _Solo cuentas_: fricción inaceptable en aula.
+- _Solo invitados_: no hay continuidad, no hay creador de retos.
+- _Email + password clásico_: peor UX para estudiantes.
 
 **Consecuencias:** Dos shapes de "user" en el cliente. `packages/types` define `Identity = { kind: 'guest' | 'user', ... }` y todo el código consume la unión. Edge cases en migración guest→user (qué hacer si el guest tiene retos en draft, etc.) deben tratarse explícitamente.
 
@@ -113,9 +120,10 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Decisión:** `packages/ai-gateway` propio. Recibe `AIRequest` tipado, decide proveedor por feature/prioridad, cachea respuestas determinísticas (mismo prompt = misma respuesta cacheada), aplica rate limit por usuario, registra métricas. Llamado solo desde server (Next.js API routes y game-server).
 
 **Alternativas:**
-- *Llamada directa desde cliente*: API keys expuestas o un proxy mínimo igual.
-- *LiteLLM / Portkey*: librerías existentes que cubren parte. Las consideramos para Fase 3+ si nuestro gateway se vuelve mantenible. Por ahora preferimos código propio simple, ajustado a nuestras 3-4 features.
-- *Vercel AI SDK*: bueno para streaming UI pero no resuelve fallback/cache.
+
+- _Llamada directa desde cliente_: API keys expuestas o un proxy mínimo igual.
+- _LiteLLM / Portkey_: librerías existentes que cubren parte. Las consideramos para Fase 3+ si nuestro gateway se vuelve mantenible. Por ahora preferimos código propio simple, ajustado a nuestras 3-4 features.
+- _Vercel AI SDK_: bueno para streaming UI pero no resuelve fallback/cache.
 
 **Consecuencias:** Más código propio inicial. A cambio: control total, cero exposición de keys, métricas de costo/uso por feature, fácil swap de proveedor.
 
@@ -131,9 +139,10 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Decisión:** Cliente nunca calcula puntaje final ni recibe la respuesta correcta antes de enviar la suya. Toda validación + scoring vive en (a) Edge Functions de Supabase para retos asincrónicos y (b) Colyseus authoritative para retos sincronizados.
 
 **Alternativas:**
-- *Confianza total cliente*: rankings sin valor.
-- *Validación cruzada con muestreo*: complejo y todavía hackeable.
-- *Anti-cheat criptográfico avanzado*: sobre-ingeniería para colegio.
+
+- _Confianza total cliente_: rankings sin valor.
+- _Validación cruzada con muestreo_: complejo y todavía hackeable.
+- _Anti-cheat criptográfico avanzado_: sobre-ingeniería para colegio.
 
 **Consecuencias:** El cliente recibe el reto sin la solución. Para retos donde la solución es derivada (ej: balanceo de ecuación), validación es trivial server-side. Para retos generados por IA, la solución se almacena cifrada/no expuesta y solo el server la lee.
 
@@ -149,9 +158,10 @@ Cada decisión arquitectónica importante se documenta como ADR (Architectural D
 **Decisión:** Monorepo con pnpm workspaces (eficiente en disco, deduplica deps). Turborepo para cachear builds y tests. Estructura `apps/*` (deployables) + `packages/*` (libs).
 
 **Alternativas:**
-- *Polyrepo*: un repo por servicio. Coordinación manual de tipos, fricción cross-repo.
-- *Monorepo sin Turborepo*: builds lentos cuando crece.
-- *Monolito*: bloquea paralelismo entre agentes.
+
+- _Polyrepo_: un repo por servicio. Coordinación manual de tipos, fricción cross-repo.
+- _Monorepo sin Turborepo_: builds lentos cuando crece.
+- _Monolito_: bloquea paralelismo entre agentes.
 
 **Consecuencias:** Cada agente trabaja en su paquete sin pisarse. Cambios cross-package se atienden con tasks específicas (Coordinador asigna). Tipos compartidos garantizan cero desincronización.
 

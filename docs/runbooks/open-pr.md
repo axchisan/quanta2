@@ -95,7 +95,7 @@ git commit -m "docs(tasks): T<id> → review"
 git push
 ```
 
-*(Nota: si el Coordinador prefiere que TASKS.md solo se edite vía PR, preguntale — la convención puede ajustarse.)*
+_(Nota: si el Coordinador prefiere que TASKS.md solo se edite vía PR, preguntale — la convención puede ajustarse.)_
 
 ## Paso 4 — Esperar review
 

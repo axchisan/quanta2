@@ -4,16 +4,17 @@
 
 ## Niveles de severidad
 
-| Nivel | Criterio | Tiempo máx. de respuesta |
-|-------|----------|--------------------------|
-| **SEV1** | App caída, ningún usuario puede jugar | <30 min |
-| **SEV2** | Feature principal rota (ej: no se puede crear sala) | <2 h |
-| **SEV3** | Feature secundaria rota (ej: no se puede regenerar sprite) | <24 h |
-| **SEV4** | Bug cosmético o raro | Próximo sprint |
+| Nivel    | Criterio                                                   | Tiempo máx. de respuesta |
+| -------- | ---------------------------------------------------------- | ------------------------ |
+| **SEV1** | App caída, ningún usuario puede jugar                      | <30 min                  |
+| **SEV2** | Feature principal rota (ej: no se puede crear sala)        | <2 h                     |
+| **SEV3** | Feature secundaria rota (ej: no se puede regenerar sprite) | <24 h                    |
+| **SEV4** | Bug cosmético o raro                                       | Próximo sprint           |
 
 ## Paso 1 — Contener (stop the bleeding)
 
 ### Si el cambio culpable está identificado y es reciente
+
 ```bash
 # Revert del commit específico
 git revert <sha>
@@ -27,10 +28,12 @@ git push origin main
 Coolify auto-despliega el revert.
 
 ### Si no está claro qué causó
+
 - ¿El último deploy fue reciente? Rollback al deploy anterior en Coolify UI.
 - ¿Un proveedor externo cayó (Gemini, Supabase self-host)? Ver "Paso 2 — Diagnosticar".
 
 ### Si es un incidente de seguridad (API key expuesta, breach)
+
 - **Rotá la key INMEDIATAMENTE** en el dashboard del proveedor.
 - Actualizá secretos en Coolify.
 - Forzá redeploy.
@@ -39,6 +42,7 @@ Coolify auto-despliega el revert.
 ## Paso 2 — Diagnosticar
 
 ### Logs
+
 ```bash
 # Logs de Next.js (apps/web) en Coolify
 curl -s -H "Authorization: Bearer <token>" \
@@ -52,6 +56,7 @@ curl -s -H "Authorization: Bearer <token>" \
 ```
 
 ### Supabase health
+
 ```bash
 # Postgres vivo?
 psql "postgresql://postgres:<pw>@db.quanta.axchisan.com:5432/postgres" -c "SELECT 1;"
@@ -61,6 +66,7 @@ curl -X POST https://db.quanta.axchisan.com/functions/v1/health
 ```
 
 ### Proveedores IA
+
 ```bash
 # Gemini
 curl -s "https://generativelanguage.googleapis.com/v1/models?key=$GEMINI_API_KEY"
@@ -70,6 +76,7 @@ curl -s -H "Authorization: Bearer $GROQ_API_KEY" https://api.groq.com/openai/v1/
 ```
 
 ### Cuotas de IA quemadas
+
 - Métricas en `ai_metrics` table o PostHog.
 - Si 429 en todos los providers: fallback chain agotada → devolver error amigable al usuario mientras se investiga.
 
@@ -78,8 +85,10 @@ curl -s -H "Authorization: Bearer $GROQ_API_KEY" https://api.groq.com/openai/v1/
 Durante un SEV1/SEV2:
 
 1. Anotá en `state/BLOCKERS.md` con `[INCIDENT]`:
+
    ```markdown
    ### I-<YYYYMMDD>-<corto> — <título>
+
    - **Severidad:** SEV<n>
    - **Detectado:** YYYY-MM-DD HH:MM
    - **Síntomas:** <qué ven los usuarios>
@@ -87,6 +96,7 @@ Durante un SEV1/SEV2:
    - **Mitigación aplicada:** <qué hiciste>
    - **Owner:** <rol>
    ```
+
 2. Si hay usuarios afectados (sala en vivo con gente), mostrar banner en UI:
    > "Estamos teniendo problemas técnicos. Los estamos resolviendo."
 
@@ -98,6 +108,7 @@ Durante un SEV1/SEV2:
 - Deploy a prod (via PR normal si no es SEV1; directo con revert/hotfix si es SEV1).
 
 ### Hotfix (bypass de proceso normal, solo SEV1)
+
 ```bash
 git checkout main && git pull
 git checkout -b hotfix/<corto>
@@ -117,31 +128,38 @@ Dentro de 48h post-incidente, el Coordinador escribe un postmortem en `docs/inci
 # Postmortem — <título>
 
 ## Resumen
+
 - **Fecha:** YYYY-MM-DD
 - **Duración:** <n> minutos
 - **Severidad:** SEV<n>
 - **Impacto:** <cuántos usuarios / qué features>
 
 ## Timeline
+
 - HH:MM — detección (cómo nos enteramos)
 - HH:MM — investigación
 - HH:MM — mitigación aplicada
 - HH:MM — resolución
 
 ## Root cause
+
 <qué causó el incidente realmente>
 
 ## Qué funcionó
+
 - <detección temprana, rollback rápido, etc.>
 
 ## Qué no funcionó
+
 - <falta de alertas, test gap, deploy sin validar>
 
 ## Action items
+
 - [ ] T<id> — <prevención>: owner <rol>, due <fecha>
 - [ ] T<id> — <detección>: ...
 
 ## Lecciones aprendidas
+
 <qué debe cambiar en procesos/código para que no vuelva a pasar>
 ```
 

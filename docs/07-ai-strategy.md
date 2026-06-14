@@ -6,11 +6,11 @@ Hacer de la IA generativa un diferenciador clave de Quanta sin caer en costos re
 
 ## Capacidades soportadas
 
-| Capacidad | Proveedores (orden de fallback) | Uso típico |
-|-----------|---------------------------------|-----------|
-| **LLM (texto)** | Gemini 2.0 Flash → Groq (Llama 3.3) → OpenRouter (DeepSeek/Qwen) | Generar retos, validar respuestas, explicar errores, sugerir hints |
-| **Generación de imágenes** | Pollinations.ai → Hugging Face Inference → Gemini nativo | Sprites, fondos, diagramas educativos |
-| **TTS (text-to-speech)** | ElevenLabs free → Coqui XTTS / Piper self-hosted → Google/Azure free | Narración de retos, feedback hablado |
+| Capacidad                  | Proveedores (orden de fallback)                                      | Uso típico                                                         |
+| -------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **LLM (texto)**            | Gemini 2.0 Flash → Groq (Llama 3.3) → OpenRouter (DeepSeek/Qwen)     | Generar retos, validar respuestas, explicar errores, sugerir hints |
+| **Generación de imágenes** | Pollinations.ai → Hugging Face Inference → Gemini nativo             | Sprites, fondos, diagramas educativos                              |
+| **TTS (text-to-speech)**   | ElevenLabs free → Coqui XTTS / Piper self-hosted → Google/Azure free | Narración de retos, feedback hablado                               |
 
 ## Arquitectura del Gateway
 
@@ -112,24 +112,25 @@ Cada feature tiene una cadena predefinida en `packages/ai-gateway/src/config.ts`
 ```typescript
 export const PROVIDER_CHAINS = {
   text: {
-    'generate-challenge':  ['gemini', 'openrouter:deepseek-r1', 'groq:llama-3.3-70b'],
-    'validate-answer':     ['groq:llama-3.3-70b', 'gemini', 'openrouter:llama-3.3'],
-    'explain-error':       ['gemini', 'groq:llama-3.3-70b'],
-    'hint':                ['groq:llama-3.3-70b', 'gemini'],
+    'generate-challenge': ['gemini', 'openrouter:deepseek-r1', 'groq:llama-3.3-70b'],
+    'validate-answer': ['groq:llama-3.3-70b', 'gemini', 'openrouter:llama-3.3'],
+    'explain-error': ['gemini', 'groq:llama-3.3-70b'],
+    hint: ['groq:llama-3.3-70b', 'gemini'],
   },
   image: {
-    'sprite':              ['pollinations:flux', 'huggingface:flux-schnell', 'gemini:imagen'],
-    'background':          ['pollinations:flux', 'huggingface:sdxl'],
-    'diagram':             ['gemini:imagen', 'pollinations:flux'],
+    sprite: ['pollinations:flux', 'huggingface:flux-schnell', 'gemini:imagen'],
+    background: ['pollinations:flux', 'huggingface:sdxl'],
+    diagram: ['gemini:imagen', 'pollinations:flux'],
   },
   audio: {
-    'narration':           ['elevenlabs', 'google-tts', 'coqui-xtts'],
-    'feedback':            ['google-tts', 'piper', 'elevenlabs'],
+    narration: ['elevenlabs', 'google-tts', 'coqui-xtts'],
+    feedback: ['google-tts', 'piper', 'elevenlabs'],
   },
 };
 ```
 
 **Comportamiento:**
+
 1. Intentar p1.
 2. Si falla (timeout, 429, 5xx, safety block), intentar p2.
 3. Si todos fallan, devolver error al caller con `code: 'all_providers_failed'` y registrar incidente.
@@ -145,6 +146,7 @@ export const PROVIDER_CHAINS = {
 ### System prompts con guardrails
 
 Cada llamada a LLM incluye en el system prompt:
+
 ```
 Sos un asistente educativo para estudiantes de colegio (14-18 años) en Colombia/LATAM.
 Tu único dominio es Física y Química nivel secundaria.
@@ -174,7 +176,14 @@ const ChallengeSchema = z.object({
   options: z.array(z.string()).min(2).max(6),
   correctAnswer: z.union([z.string(), z.number()]),
   explanation: z.string().min(20).max(800),
-  topic: z.enum(['kinematics','dynamics','energy','equation_balance','reactions','atomic_structure', /* ... */]),
+  topic: z.enum([
+    'kinematics',
+    'dynamics',
+    'energy',
+    'equation_balance',
+    'reactions',
+    'atomic_structure' /* ... */,
+  ]),
 });
 ```
 

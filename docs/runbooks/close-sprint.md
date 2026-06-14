@@ -10,6 +10,7 @@ gh pr list --state closed --search "merged:>=<fecha-inicio-sprint>"
 ```
 
 Comparar con `state/SPRINT.md`:
+
 - ¿Se cumplió el objetivo del sprint?
 - ¿Qué tasks quedaron sin cerrar? ¿Por qué?
 - ¿Aparecieron blockers no previstos?
@@ -30,15 +31,19 @@ Agregá al final de `state/DECISIONS.md`:
 ### Retro Sprint <n> — <fecha>
 
 **Qué funcionó:**
+
 - <observación>
 
 **Qué no funcionó:**
+
 - <observación>
 
 **Qué cambiar para Sprint <n+1>:**
+
 - <acción concreta>
 
 **Lessons learned:**
+
 - <si hay>
 ```
 
@@ -72,6 +77,7 @@ Editá `state/SPRINT.md`:
 Crea nuevas tasks en `state/TASKS.md` siguiendo `templates/task.md`. Tomá del backlog las que correspondan. Si faltan, creá nuevas.
 
 **Priorización:**
+
 1. Bugs de producción (si los hay).
 2. Desbloqueos críticos.
 3. Progreso de la fase actual del roadmap.

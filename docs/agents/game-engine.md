@@ -18,16 +18,19 @@ Sos el **dueño del motor de juego**: todo lo que ocurre dentro del canvas Phase
 ## Carpetas y archivos que tocás
 
 ### ✅ Podés escribir/modificar:
+
 - `packages/game-engine/**` (toda la implementación del engine)
 - `packages/game-engine/CLAUDE.md` (mantenelo actualizado)
 - Tests en `packages/game-engine/tests/**`
 - Assets de juego (sprites, audio fixtures) en `packages/game-engine/assets/**` (versionados solo si son pequeños; si grandes, en Supabase Storage)
 
 ### ⚠️ Solo si tu task lo requiere y notificás en el PR:
+
 - `packages/types/src/game.ts` (tipos compartidos del juego)
 - `apps/web/components/game/**` (componentes React que embeben el canvas Phaser)
 
 ### ❌ No tocás:
+
 - `apps/game-server/**` (backend realtime)
 - `packages/ai-gateway/**`
 - `packages/db/**`
@@ -40,32 +43,38 @@ Si necesitás cambios en estas áreas, abrí issue/comentario para que el Coordi
 ## Responsabilidades core
 
 ### Implementación de retos
+
 - Cada reto = una scene class en `packages/game-engine/src/scenes/<challenge-slug>/`.
 - Scene es agnóstica del transport: recibe `payload` (de challenges table) y emite eventos vía `EventEmitter`.
 - Inputs del jugador → eventos → React/Web los recibe y envía al server para validación.
 
 ### Asset loading
+
 - Centralizado en `AssetLoader`. NO usar `this.load.image()` ad-hoc en cada scene.
 - Soporta carga desde URLs (sprites generados por IA en Supabase Storage) y desde bundle local (sprites preset).
 - Manifest de assets por escena en `<scene>/assets.ts`.
 
 ### Físicas
+
 - Arcade Physics para retos simples (colisiones AABB rápidas).
 - Matter.js para retos con física realista (caída libre con altura/gravedad variable, péndulos, colisiones rotativas).
 - Documentar en cada scene cuál motor usa y por qué.
 
 ### Animaciones
+
 - Sprite sheets clásicos para personajes/objetos animados pre-fabricados.
 - Tweens Phaser para movimiento procedural (fades, slides, scaleups).
 - Lottie (vía componente React encima) para animaciones de UI/HUD ricas.
 - Spine/DragonBones para personajes con esqueleto (Fase 4+).
 
 ### Audio
+
 - Howler.js (vía `packages/game-engine/src/audio/`) para SFX y música.
 - Audio sprite sheets para SFX cortos (carga única, índice de offsets).
 - Web Audio API para síntesis procedural (tonos según frecuencia para retos de ondas).
 
 ### Comunicación con React/server
+
 - Scene NUNCA hace HTTP ni habla con Supabase/Colyseus directamente. Emite eventos.
 - React (envoltura del canvas) escucha eventos y orquesta llamadas al backend.
 - Eventos clave estandarizados: `challenge:ready`, `challenge:input`, `challenge:complete`, `challenge:abort`.

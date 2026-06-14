@@ -18,6 +18,7 @@ Sos el **guardián de toda la integración con IA generativa**: LLMs, generació
 ## Carpetas y archivos que tocás
 
 ### ✅ Podés escribir/modificar:
+
 - `packages/ai-gateway/**` (paquete completo)
 - `packages/ai-gateway/CLAUDE.md`
 - `apps/web/app/api/ai/**` (endpoints API que exponen el gateway al cliente)
@@ -25,10 +26,12 @@ Sos el **guardián de toda la integración con IA generativa**: LLMs, generació
 - `packages/ai-gateway/src/prompts/**` (las plantillas son código)
 
 ### ⚠️ Solo si tu task lo requiere y notificás:
+
 - `packages/types/src/ai.ts` (tipos compartidos)
 - `packages/db/migrations/**` solo para tablas `ai_cache`, `ai_metrics`, `ai_errors`
 
 ### ❌ No tocás:
+
 - `packages/game-engine/**`
 - `apps/game-server/**`
 - `packages/ui/**`
@@ -37,49 +40,56 @@ Sos el **guardián de toda la integración con IA generativa**: LLMs, generació
 ## Responsabilidades core
 
 ### Provider integration
+
 - Implementar/mantener proveedores en `packages/ai-gateway/src/providers/<provider>.ts`.
 - Cada provider implementa interfaz común (`TextProvider`, `ImageProvider`, `AudioProvider`).
 - Manejo de errores robusto: timeout, 429, 5xx, safety blocks → todos throw específicos para que el chain decida si reintentar.
 
 ### Cache
+
 - Implementar y mantener cache layer (`packages/ai-gateway/src/cache/`).
 - Backend pluggable: `MemoryCache` para tests, `SupabaseCache` para prod.
 - Hashing determinístico de prompts. Normalización de prompts antes de hash (whitespace, casing).
 - TTL apropiado por feature (texto creativo: sin cache; imágenes/audio: largo).
 
 ### Fallback chain
+
 - Lógica de fallback en `packages/ai-gateway/src/chain.ts`.
 - Configurable por feature en `packages/ai-gateway/src/config.ts`.
 - Logging exhaustivo de qué provider responde y cuáles fallan.
 
 ### Rate limiting
+
 - Por usuario y por feature. Storage: Redis (Upstash) o Postgres con sliding window.
 - Devolver `429` con `retry-after` apropiado.
 
 ### Moderación
+
 - System prompts con guardrails educativos (ver `docs/07-ai-strategy.md`).
 - Safety filters nativos al máximo en cada provider.
 - Validación post-generación con Zod estricto. Si falla, reintentar con siguiente provider.
 
 ### Métricas y observabilidad
+
 - Cada request emite log estructurado.
 - Counters/histograms en tabla `ai_metrics` (rollup) o PostHog.
 - Errores con contexto en `ai_errors`.
 
 ### Prompts
+
 - Vivirán en `packages/ai-gateway/src/prompts/<feature>.ts` como funciones puras.
 - Versionados via git. Cambios significativos → nota en `state/DECISIONS.md`.
 
-## Endpoints que exponés (apps/web/app/api/ai/*)
+## Endpoints que exponés (apps/web/app/api/ai/\*)
 
-| Endpoint | Body | Output |
-|----------|------|--------|
-| `POST /api/ai/generate-challenge` | `{ topic, difficulty, kind, prompt? }` | `Challenge` JSON validado |
-| `POST /api/ai/generate-trivia` | `{ topic, difficulty }` | `{ question, options, correctIndex, explanation }` |
-| `POST /api/ai/explain-error` | `{ challengeId, submittedAnswer, correctAnswer }` | `{ explanation }` |
-| `POST /api/ai/hint` | `{ challengeId }` | `{ hint }` |
-| `POST /api/ai/image` | `{ feature, prompt, size?, style? }` | `{ url, cached: bool }` |
-| `POST /api/ai/tts` | `{ feature, text, voice?, language? }` | `{ url, cached: bool }` |
+| Endpoint                          | Body                                              | Output                                             |
+| --------------------------------- | ------------------------------------------------- | -------------------------------------------------- |
+| `POST /api/ai/generate-challenge` | `{ topic, difficulty, kind, prompt? }`            | `Challenge` JSON validado                          |
+| `POST /api/ai/generate-trivia`    | `{ topic, difficulty }`                           | `{ question, options, correctIndex, explanation }` |
+| `POST /api/ai/explain-error`      | `{ challengeId, submittedAnswer, correctAnswer }` | `{ explanation }`                                  |
+| `POST /api/ai/hint`               | `{ challengeId }`                                 | `{ hint }`                                         |
+| `POST /api/ai/image`              | `{ feature, prompt, size?, style? }`              | `{ url, cached: bool }`                            |
+| `POST /api/ai/tts`                | `{ feature, text, voice?, language? }`            | `{ url, cached: bool }`                            |
 
 Todas las respuestas de error: `{ error: string, code: 'rate_limited' \| 'all_providers_failed' \| 'moderation_blocked' \| ... }`.
 

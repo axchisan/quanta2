@@ -37,6 +37,7 @@ Verificá que el PR modifica solo archivos permitidos para el rol:
 - `rol:coordinator` → `docs/**`, CI, infra, cross-package refactors.
 
 **Archivos cross-cutting permitidos si el PR los justifica:**
+
 - `packages/types/**` (cualquier rol puede modificar si su task lo requiere, debe mencionarlo).
 - `packages/config/**` (solo coordinator o con PR explícito).
 
@@ -45,6 +46,7 @@ Si hay cambios fuera del scope: comentá pidiendo split o justificación.
 ## Paso 4 — Code review
 
 ### Checklist técnico
+
 - [ ] **TS estricto:** sin `any`, sin `as` injustificado.
 - [ ] **Zod:** input externo validado.
 - [ ] **Tests:** unit tests añadidos para lógica nueva; integration para endpoints/queries.
@@ -60,6 +62,7 @@ Si hay cambios fuera del scope: comentá pidiendo split o justificación.
   - Cliente no recibe `solution` de challenges.
 
 ### Checklist funcional
+
 - [ ] **Criterio de aceptación de la task** se cumple (leé la task en `state/TASKS.md`).
 - [ ] **Breaking changes** no introducidos sin ADR.
 - [ ] **Backwards compatibility** si aplica (ej: migración DB reversible).
@@ -67,6 +70,7 @@ Si hay cambios fuera del scope: comentá pidiendo split o justificación.
 - [ ] **CLAUDE.md** del paquete actualizado si aplica.
 
 ### Checklist UX (si PR toca UI)
+
 - [ ] Loading states.
 - [ ] Error states.
 - [ ] Empty states.
@@ -76,6 +80,7 @@ Si hay cambios fuera del scope: comentá pidiendo split o justificación.
 ## Paso 5 — Tipos de review
 
 ### Aprobar (LGTM)
+
 Todo bien, mergeable.
 
 ```bash
@@ -83,6 +88,7 @@ gh pr review <number> --approve --body "LGTM. Ver Paso 6."
 ```
 
 ### Pedir cambios
+
 Hay issues bloqueantes.
 
 ```bash
@@ -98,6 +104,7 @@ EOF
 ```
 
 ### Solo comentar
+
 Tenés observaciones pero no bloquean (ej: dudas, sugerencias menores).
 
 ```bash
@@ -121,6 +128,7 @@ gh pr merge <number> --squash --delete-branch
 ## Paso 7 — Post-merge
 
 Actualizá `state/TASKS.md`:
+
 ```diff
 - **Status:** review
 - **PR:** <link>
@@ -129,6 +137,7 @@ Actualizá `state/TASKS.md`:
 ```
 
 Si el PR desbloqueó otras tasks (`blockedBy: T<x>`):
+
 - Cambialas de `blocked` a `pending`.
 - Opcional: comentá en el PR original: "Desbloquea T<y>, T<z>".
 
@@ -137,15 +146,19 @@ Si el PR cerró un hito importante, anotá en `state/CHANGELOG.md` bajo el sprin
 ## Rejection templates
 
 ### Scope inapropiado
+
 > Este PR cambia archivos fuera de tu rol (`packages/X/`). Split por favor: un PR para tu rol y otro asignado a `<otro-rol>` vía task nueva.
 
 ### CI rojo
+
 > CI falla en `<check>`. Revisá logs (`gh pr checks`) y arreglá antes de que lo mire.
 
 ### Sin tests
+
 > No veo tests para la lógica nueva en `<archivo>`. Agregá al menos casos del happy path y un edge case obvio.
 
 ### Decisión no documentada
+
 > Cambio de arquitectura/stack requiere ADR en `docs/04-tech-decisions.md`. Agregala antes de mergear.
 
 ## Anti-patrones del Coordinador

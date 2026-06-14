@@ -74,6 +74,7 @@ El agente lee `docs/runbooks/kickoff-agent.md`, identifica su briefing en `docs/
 ## Reglas de coordinación
 
 ### El Coordinador es el único que toca:
+
 - `docs/state/SPRINT.md` (planificación)
 - `docs/state/TASKS.md` (excepto el campo `status` de tu propia task)
 - `docs/state/CHANGELOG.md`
@@ -82,12 +83,14 @@ El agente lee `docs/runbooks/kickoff-agent.md`, identifica su briefing en `docs/
 - Merges a `main`
 
 ### Los Especialistas pueden:
+
 - Crear/editar archivos dentro de su carpeta principal (ver `docs/agents/<rol>.md`)
 - Editar el `status` de su propia task en `state/TASKS.md` (pending → in_progress → done)
 - Anotar en `state/BLOCKERS.md` y `state/DECISIONS.md`
 - Modificar `packages/types` solo si su task lo requiere y notifica al Coordinador en el PR
 
 ### Nadie hace sin permiso explícito:
+
 - Modificar el stack tecnológico (cambiar de DB, de framework, etc.)
 - Agregar dependencias externas grandes (>500KB o críticas para seguridad)
 - Refactorizar paquetes ajenos
@@ -138,15 +141,15 @@ El humano (usuario) lee el repo igual que cualquier agente, así que con anotaci
 
 ## Resumen de archivos clave (cheat sheet)
 
-| Si querés... | Mirá... |
-|--------------|---------|
-| Empezar | `runbooks/kickoff-agent.md` |
-| Saber qué hacer | `state/TASKS.md` (tus tasks asignadas) |
-| Saber el sprint actual | `state/SPRINT.md` |
-| Ver qué está bloqueando algo | `state/BLOCKERS.md` |
-| Ver decisiones recientes | `state/DECISIONS.md` |
-| Ver historia de releases | `state/CHANGELOG.md` |
-| Abrir un PR | `runbooks/open-pr.md` + `templates/pr.md` |
-| (Coordinador) revisar un PR | `runbooks/review-pr.md` |
-| (Coordinador) cerrar sprint | `runbooks/close-sprint.md` |
-| Si rompiste algo | `runbooks/incident.md` |
+| Si querés...                 | Mirá...                                   |
+| ---------------------------- | ----------------------------------------- |
+| Empezar                      | `runbooks/kickoff-agent.md`               |
+| Saber qué hacer              | `state/TASKS.md` (tus tasks asignadas)    |
+| Saber el sprint actual       | `state/SPRINT.md`                         |
+| Ver qué está bloqueando algo | `state/BLOCKERS.md`                       |
+| Ver decisiones recientes     | `state/DECISIONS.md`                      |
+| Ver historia de releases     | `state/CHANGELOG.md`                      |
+| Abrir un PR                  | `runbooks/open-pr.md` + `templates/pr.md` |
+| (Coordinador) revisar un PR  | `runbooks/review-pr.md`                   |
+| (Coordinador) cerrar sprint  | `runbooks/close-sprint.md`                |
+| Si rompiste algo             | `runbooks/incident.md`                    |
