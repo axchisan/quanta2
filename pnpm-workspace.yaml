@@ -1,3 +1,9 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+
+# Dependencias con scripts de instalación permitidos (esbuild/sharp bajan binarios).
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - msgpackr-extract

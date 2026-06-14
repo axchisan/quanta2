@@ -11,18 +11,18 @@
 
 ## Activos
 
-### B002 — Docker no instalado (bloquea verificación runtime de Supabase y Colyseus en contenedor)
-
-- **Tipo:** [ESCALATION]
-- **Reportado:** 2026-04-19 por coordinator
-- **Task afectada:** T007 (parcial) — el esquema/migración/seed están escritos y typechean, pero `pnpm db:start && pnpm db:migrate && pnpm db:gen-types` no se pudieron ejecutar (requieren Docker). También bloquea `infra/docker-compose.dev.yml`.
-- **Bloquea a:** backend-realtime (verificación end-to-end del esquema), infra.
-- **Esperando:** que el humano instale Docker en el entorno de dev (`paru -S docker` / habilitar servicio) y re-corra los scripts `db:*`.
-- **Notas:** El resto del scaffolding (lint/typecheck/test/build) NO depende de Docker y está verde. El test de Colyseus corre embebido (sin Docker).
+(Ninguno.)
 
 ---
 
 ## Resueltos recientes
+
+### B002 — Docker no instalado — **RESUELTO 2026-04-19**
+
+- **Tipo:** [ESCALATION]
+- **Reportado:** 2026-04-19 por coordinator
+- **Resuelto:** 2026-04-19 por humano (axchisan). Docker 29.5.2 instalado + usuario agregado al grupo `docker` (re-login). T007 verificada end-to-end: `db:start`/`db:migrate`/`db:gen-types` corren OK.
+- **Nota:** El `gen types --local` del CLI 2.106 exige presencia de `SUPABASE_ACCESS_TOKEN` aun en local (regresión "LegacyPlatformAuthRequired"). El script `db:gen-types` ahora setea un dummy (`${SUPABASE_ACCESS_TOKEN:-local-dev}`) y usa la sintaxis nueva (`gen types --local`, sin el positional `typescript`).
 
 ### B001 — Tooling Node + pnpm no instalado — **RESUELTO 2026-04-19**
 

@@ -88,7 +88,7 @@
 ### T007 — Skeleton packages/db (esquema + migración inicial)
 
 - **Owner:** backend-realtime
-- **Status:** done (parcial, 2026-04-19) — migración `0001_initial_schema.sql` (8 tablas + RLS + triggers + índices) escrita y el paquete typechea; verificación runtime (`db:start`/`db:migrate`/`db:gen-types`) **bloqueada por B002 (Docker)**
+- **Status:** done (2026-04-19) — `db:start` levanta Supabase local, `db:migrate` aplica `0001_initial_schema.sql` (8 tablas, RLS habilitado en todas), `db:gen-types` regenera `packages/types/src/db.ts` (510 líneas); typecheck/lint verdes contra el esquema real
 - **Priority:** P0
 - **Sprint:** 0
 - **BlockedBy:** T001
