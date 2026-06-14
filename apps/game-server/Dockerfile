@@ -1,37 +1,30 @@
-# NOTE: build context is the MONOREPO ROOT, not this directory.
+# Imagen de producción para apps/game-server (Colyseus).
+# NOTA: el build context es la RAÍZ del monorepo (necesita el workspace pnpm).
 #   docker build -f apps/game-server/Dockerfile -t quanta-game-server .
-# The build needs the pnpm workspace (root manifests + workspace packages).
+# En Coolify: Base Directory = / , Dockerfile Location = /apps/game-server/Dockerfile
 
 # ---- Stage 1: build ----
 FROM node:22-alpine AS builder
+# git: lo necesita la resolución de @colyseus/uwebsockets-transport (dep git
+# transitiva de colyseus). NO la usamos en runtime (usamos @colyseus/ws-transport),
+# solo necesita resolverse durante el deploy.
+RUN corepack enable && apk add --no-cache git
 WORKDIR /repo
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-# Workspace + root manifests (cache-friendly layer)
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.base.json ./
-
-# Manifests of the workspace packages this app depends on
-COPY packages/config/package.json packages/config/package.json
-COPY packages/types/package.json packages/types/package.json
-COPY apps/game-server/package.json apps/game-server/package.json
+# Copia el workspace completo (node_modules/dist/etc. excluidos vía .dockerignore)
+COPY . .
 
 RUN pnpm install --frozen-lockfile
-
-# Source of this app and the packages it bundles
-COPY packages/config packages/config
-COPY packages/types packages/types
-COPY apps/game-server apps/game-server
-
 RUN pnpm --filter @quanta/game-server build
 
-# Prune to production deps only for the runtime image
+# Empaqueta el app con solo sus deps de producción en /app.
 RUN pnpm --filter @quanta/game-server deploy --prod --legacy /app
 
 # ---- Stage 2: runtime ----
 FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
+ENV GAME_SERVER_PORT=2567
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /repo/apps/game-server/dist ./dist

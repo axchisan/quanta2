@@ -32,4 +32,4 @@ Supabase local NO está en este compose: se levanta aparte con `pnpm --filter @q
 
 - Configurar auto-deploy en Coolify para `web` y `game-server` (B002, B003).
 - Configurar Supabase self-hosted en Coolify (B004).
-- Dockerfile de producción para `apps/web` (multi-stage, output standalone de Next).
+- ~~Dockerfile de producción para `apps/web`~~ ✅ hecho y verificado (build + run). Ver `infra/coolify.md`.
