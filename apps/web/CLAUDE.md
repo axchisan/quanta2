@@ -39,7 +39,8 @@ Next.js 15 (App Router) · React 19 · Tailwind v4 · TS estricto. Zustand + Tan
 
 ## Config
 
-- `next.config.ts` (TS; no usamos `"type":"module"` en package.json para evitar fricción de carga de config).
+- `next.config.ts` (TS; no usamos `"type":"module"` en package.json para evitar fricción de carga de config). Usa `output: 'standalone'` + `outputFileTracingRoot` (raíz del monorepo) para la imagen Docker.
+- `Dockerfile` multi-stage (build context = raíz del monorepo) **verificado** (build + run sirve la landing). Deploy en `quanta.axchisan.com` vía Coolify — ver `infra/coolify.md`.
 - `eslint.config.mjs` reexporta `@quanta/config/eslint/react` (no usamos `eslint-config-next`).
 - `tsconfig.json` extiende `../../tsconfig.base.json`; `jsx: preserve`, plugin `next`, alias `@/* → ./*`.
 - `next-env.d.ts` lo genera Next (gitignored, no commitear).
