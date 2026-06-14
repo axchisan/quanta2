@@ -26,15 +26,15 @@
 
 Ver `state/TASKS.md` para detalles. Resumen:
 
-| Task                                                              | Owner            | Status                       |
-| ----------------------------------------------------------------- | ---------------- | ---------------------------- |
-| T001 — Scaffolding monorepo (pnpm + Turborepo)                    | coordinator      | done                         |
-| T002 — CI inicial (GitHub Actions: lint, typecheck)               | coordinator      | done                         |
-| T003 — Skeleton apps/web (Next.js 15)                             | ui-web           | done                         |
-| T004 — Skeleton apps/game-server (Colyseus)                       | backend-realtime | done                         |
-| T005 — Skeleton packages/game-engine (Phaser)                     | game-engine      | done                         |
-| T006 — Skeleton packages/ai-gateway                               | ai-gateway       | done                         |
-| T007 — Skeleton packages/db (Supabase config + migración inicial) | backend-realtime | done (parcial — B002 Docker) |
+| Task                                                              | Owner            | Status |
+| ----------------------------------------------------------------- | ---------------- | ------ |
+| T001 — Scaffolding monorepo (pnpm + Turborepo)                    | coordinator      | done   |
+| T002 — CI inicial (GitHub Actions: lint, typecheck)               | coordinator      | done   |
+| T003 — Skeleton apps/web (Next.js 15)                             | ui-web           | done   |
+| T004 — Skeleton apps/game-server (Colyseus)                       | backend-realtime | done   |
+| T005 — Skeleton packages/game-engine (Phaser)                     | game-engine      | done   |
+| T006 — Skeleton packages/ai-gateway                               | ai-gateway       | done   |
+| T007 — Skeleton packages/db (Supabase config + migración inicial) | backend-realtime | done   |
 
 ### Updates (anyone can append)
 
@@ -42,11 +42,12 @@ Ver `state/TASKS.md` para detalles. Resumen:
 
 - 2026-04-18 — coordinator: docs maestra completa (vision, architecture, roadmap, conventions, ADRs, workflow, data-model, ai-strategy, game-design, briefings agentes, state, runbooks, templates). Próximo: scaffolding monorepo.
 - 2026-04-19 — coordinator: equipo multi-agente levantado (4 especialistas + coordinator). Los 4 especialistas hicieron check-in y quedan draftando previews de T003/T004+T007/T005/T006 mientras arranco T001. T001 pausada por B001 (Node+pnpm no instalados, esperando humano).
-- 2026-04-19 — coordinator: B001 resuelto (Node 25.9 + pnpm 10.33). Scaffolding completo T001–T007 + CI (T002) + `infra/`. `pnpm install · lint · typecheck · test · build` verdes en los 9 proyectos del workspace; web sirve la landing en :3000 y el test de Colyseus conecta por WS. Único pendiente: verificación runtime del esquema Supabase (T007), bloqueada por B002 (Docker no instalado). DoD del sprint cumplida salvo ese punto.
+- 2026-04-19 — coordinator: B001 resuelto (Node 25.9 + pnpm 10.33). Scaffolding completo T001–T007 + CI (T002) + `infra/`. `pnpm install · lint · typecheck · test · build` verdes en los 9 proyectos del workspace; web sirve la landing en :3000 y el test de Colyseus conecta por WS. Pendiente: verificación runtime del esquema Supabase (T007), bloqueada por B002 (Docker).
+- 2026-04-19 — coordinator: B002 resuelto (Docker 29.5.2). T007 verificada end-to-end: Supabase local levanta, la migración aplica las 8 tablas con RLS, tipos regenerados (`packages/types/src/db.ts`, 510 líneas). **DoD del Sprint 0 cumplida al 100%.** PR #1 abierto con CI verde en GitHub Actions.
 
 ### Blockers activos
 
-Ver `state/BLOCKERS.md`. **B002 [ESCALATION]** — Docker no instalado; bloquea la verificación runtime de Supabase (`db:start`/`db:migrate`/`db:gen-types`) e `infra/docker-compose.dev.yml`. (B001 resuelto.)
+Ver `state/BLOCKERS.md`. **(Ninguno.)** B001 y B002 resueltos.
 
 ---
 
