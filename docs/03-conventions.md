@@ -11,37 +11,38 @@
 
 ## Naming
 
-| Tipo | Convención | Ejemplo |
-|------|-----------|---------|
-| Archivos TS/TSX | `kebab-case.ts(x)` | `challenge-generator.ts`, `room-card.tsx` |
-| Componentes React | `PascalCase` | `RoomCard`, `ChallengePreview` |
-| Funciones / variables | `camelCase` | `generateChallenge`, `roomCode` |
-| Tipos / interfaces | `PascalCase` | `Challenge`, `RoomMember` |
-| Constantes módulo | `SCREAMING_SNAKE_CASE` | `MAX_PLAYERS_PER_ROOM` |
-| Tablas Postgres | `snake_case` plural | `users`, `challenge_attempts` |
-| Columnas Postgres | `snake_case` | `created_at`, `room_code` |
-| Enum values DB | `snake_case` | `'in_progress'`, `'kahoot_room'` |
-| Carpetas paquetes | `kebab-case` | `game-engine`, `ai-gateway` |
-| Branches | `feat/<rol>-<task-id>-<slug>` | `feat/game-engine-T012-falling-physics` |
+| Tipo                  | Convención                    | Ejemplo                                   |
+| --------------------- | ----------------------------- | ----------------------------------------- |
+| Archivos TS/TSX       | `kebab-case.ts(x)`            | `challenge-generator.ts`, `room-card.tsx` |
+| Componentes React     | `PascalCase`                  | `RoomCard`, `ChallengePreview`            |
+| Funciones / variables | `camelCase`                   | `generateChallenge`, `roomCode`           |
+| Tipos / interfaces    | `PascalCase`                  | `Challenge`, `RoomMember`                 |
+| Constantes módulo     | `SCREAMING_SNAKE_CASE`        | `MAX_PLAYERS_PER_ROOM`                    |
+| Tablas Postgres       | `snake_case` plural           | `users`, `challenge_attempts`             |
+| Columnas Postgres     | `snake_case`                  | `created_at`, `room_code`                 |
+| Enum values DB        | `snake_case`                  | `'in_progress'`, `'kahoot_room'`          |
+| Carpetas paquetes     | `kebab-case`                  | `game-engine`, `ai-gateway`               |
+| Branches              | `feat/<rol>-<task-id>-<slug>` | `feat/game-engine-T012-falling-physics`   |
 
 ## Commits (Conventional Commits)
 
 Formato: `<type>(<scope>): <subject>` — minúscula, imperativo, sin punto final.
 
-| Type | Cuándo |
-|------|--------|
-| `feat` | Funcionalidad nueva |
-| `fix` | Corrección de bug |
-| `chore` | Mantenimiento (deps, configs) |
-| `docs` | Cambios solo en `docs/` o READMEs |
-| `test` | Tests añadidos/cambiados sin cambio de comportamiento |
-| `refactor` | Reorganización sin cambio de comportamiento |
-| `perf` | Mejora de performance |
-| `style` | Formato/whitespace (raro, lo hace el linter) |
+| Type       | Cuándo                                                |
+| ---------- | ----------------------------------------------------- |
+| `feat`     | Funcionalidad nueva                                   |
+| `fix`      | Corrección de bug                                     |
+| `chore`    | Mantenimiento (deps, configs)                         |
+| `docs`     | Cambios solo en `docs/` o READMEs                     |
+| `test`     | Tests añadidos/cambiados sin cambio de comportamiento |
+| `refactor` | Reorganización sin cambio de comportamiento           |
+| `perf`     | Mejora de performance                                 |
+| `style`    | Formato/whitespace (raro, lo hace el linter)          |
 
 **Scope** es el paquete o área: `web`, `game-engine`, `ai-gateway`, `game-server`, `db`, `ui`, `docs`, `ci`, `infra`.
 
 Ejemplos:
+
 - `feat(game-engine): add falling-body physics scene`
 - `fix(ai-gateway): retry on Gemini 429`
 - `docs(roadmap): mark fase 1 complete`

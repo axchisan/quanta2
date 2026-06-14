@@ -6,7 +6,7 @@
 
 El primer mensaje del humano en la sesión te debería decir quién sos, por ejemplo:
 
-> *"Soy el agente UI-WEB. Leé el kickoff y empezá."*
+> _"Soy el agente UI-WEB. Leé el kickoff y empezá."_
 
 Si no está claro, preguntale al humano. Los roles válidos son:
 
@@ -67,6 +67,7 @@ Si hay una task `pending` asignada a vos en `state/TASKS.md` y sin `blockedBy` a
 3. Arrancá a implementar.
 
 Si no hay task `pending` para vos:
+
 - Miré si tu rol tiene tasks `blocked` esperando otras. Si la dep cerró recién, avisá al Coordinador.
 - Si no hay trabajo y sos especialista: ping al Coordinador en `state/BLOCKERS.md` marcado `[ESCALATION]`.
 - Si sos Coordinador: plantea nuevas tasks según roadmap (ver `docs/02-roadmap.md`).
@@ -99,16 +100,21 @@ Antes de cerrar tu panel tmux:
 ## Preguntas frecuentes
 
 **¿Qué hago si los docs están desactualizados vs el código?**
+
 > Abrí task para actualizarlos. No tomes decisiones basándote en docs rotas — leé el código y anotá en `DECISIONS.md` lo que encontraste.
 
 **¿Qué hago si mi task me lleva fuera de mi área?**
+
 > Paralo. Anotá en el PR por qué. Pedí al Coordinador que re-divida la task o asigne el cross-cut a otro agente.
 
 **¿Y si el Coordinador no responde?**
+
 > Anotá `[ESCALATION]` en `state/BLOCKERS.md`. El humano revisa periódicamente.
 
 **¿Puedo trabajar en múltiples tasks en paralelo?**
+
 > Solo si tienen ramas separadas y son ortogonales. Prefero: una a la vez bien hecha.
 
 **Perdí contexto entre sesiones, ¿qué hago?**
+
 > Este runbook es la respuesta. Empezá de cero en el Paso 1. Los docs están para eso.

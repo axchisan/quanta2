@@ -12,6 +12,7 @@
 ### Sprint 0 — Foundations & Documentación maestra (2026-04-18 → 2026-04-25)
 
 #### Added
+
 - 📚 Documentación maestra completa del proyecto en `docs/`:
   - `00-vision.md` — visión, audiencia, criterios de éxito
   - `01-architecture.md` — stack, diagramas, flujos
@@ -29,9 +30,11 @@
 - 🏗️ CLAUDE.md raíz con guía rápida.
 
 #### Changed
+
 - (En progreso) Scaffolding del monorepo.
 
 #### Fixed
+
 - (Nada todavía.)
 
 ---
@@ -42,14 +45,18 @@
 ### Sprint <n> — <nombre> (YYYY-MM-DD → YYYY-MM-DD)
 
 #### Added
+
 - ...
 
 #### Changed
+
 - ...
 
 #### Fixed
+
 - ...
 
 #### Removed
+
 - ...
 ```

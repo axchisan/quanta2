@@ -11,6 +11,7 @@
 **Objetivo:** infraestructura completa y minimalista, sobre la que las siguientes fases construyen sin fricción.
 
 ### Entregables
+
 - [ ] Monorepo pnpm + Turborepo configurado, los 8 paquetes/apps creados con stub mínimo
 - [ ] TS estricto, ESLint, Prettier, Husky pre-commit funcionando
 - [ ] Supabase self-hosted desplegado en Coolify (`db.quanta.axchisan.com`)
@@ -23,6 +24,7 @@
 - [ ] `/docs` completa (este sprint la genera el coordinador-humano de arranque)
 
 ### Criterio de cierre
+
 `pnpm install && pnpm dev` levanta todo localmente. Push a `main` despliega a `quanta.axchisan.com`. Un visitante puede abrir la URL, ingresar nickname, ver una landing y "entrar" a una sala dummy.
 
 ---
@@ -32,6 +34,7 @@
 **Objetivo:** primera demo que tu hermana puede mostrarle al profesor.
 
 ### Entregables
+
 - [ ] Reto **Caída Libre** (Física): simulación con Phaser+Matter.js. Estudiante ajusta altura/gravedad, predice tiempo de caída, juego valida.
 - [ ] Reto **Balanceo de Ecuaciones** (Química): drag & drop de coeficientes en una ecuación. Validación visual.
 - [ ] Reto **Trivia Mixta** (F+Q): pregunta de opción múltiple generada por IA según tema, con feedback explicativo del LLM al fallar.
@@ -42,6 +45,7 @@
 - [ ] Sprites bajo demanda funcionando para los retos que lo necesiten.
 
 ### Criterio de cierre
+
 URL pública (`quanta.axchisan.com`) que una persona externa puede usar en celular y PC. Juega los 3 retos, recibe feedback de IA, ve su puntaje guardado al volver a entrar (si tiene cuenta) o solo en la sesión (si invitado). Demo grabada de 2 min.
 
 ---
@@ -51,6 +55,7 @@ URL pública (`quanta.axchisan.com`) que una persona externa puede usar en celul
 **Objetivo:** componente social funcional. Compañeros pueden competir en vivo.
 
 ### Entregables
+
 - [ ] Modo **Sala Kahoot**: anfitrión crea sala, comparte código, hasta 40 jugadores responden simultáneamente. Ranking en vivo entre preguntas.
 - [ ] Modo **Duelo 1v1**: matchmaking simple (código directo) o invitación. Mejor de 5 retos.
 - [ ] Presencia en tiempo real (quién está conectado, indicadores visuales).
@@ -59,6 +64,7 @@ URL pública (`quanta.axchisan.com`) que una persona externa puede usar en celul
 - [ ] Lobbies y chat de sala (texto simple, moderado).
 
 ### Criterio de cierre
+
 10 jugadores reales (probado en clase) compiten en una sala Kahoot. Ranking actualiza <500ms. Demo grabada con varios dispositivos.
 
 ---
@@ -68,6 +74,7 @@ URL pública (`quanta.axchisan.com`) que una persona externa puede usar en celul
 **Objetivo:** la herramienta de expansión que diferencia a Quanta de cualquier juego de trivia.
 
 ### Entregables
+
 - [ ] UI del Creador (en `apps/web/creator`): wizard de 3-4 pasos.
 - [ ] Endpoint `POST /api/ai/generate-challenge`: LLM produce reto estructurado + assets bajo demanda.
 - [ ] Preview interactivo del reto antes de publicar (jugarlo como prueba).
@@ -78,6 +85,7 @@ URL pública (`quanta.axchisan.com`) que una persona externa puede usar en celul
 - [ ] Generación de sprites/diagramas IA integrada al wizard.
 
 ### Criterio de cierre
+
 Tu hermana crea un reto nuevo desde cero en menos de 5 min, lo publica, lo juega con sus amigos esa misma tarde. Demo grabada del flujo completo.
 
 ---
@@ -87,6 +95,7 @@ Tu hermana crea un reto nuevo desde cero en menos de 5 min, lo publica, lo juega
 **Objetivo:** completar los modos de juego y elevar la calidad de producto.
 
 ### Entregables
+
 - [ ] Modo **Misiones cooperativas**: 2-4 jugadores resuelven juntos retos compuestos (ej: armar un circuito por partes, balancear ecuación entre todos).
 - [ ] Modo **Torneo / Liga asincrónica**: ranking semanal/mensual, badges, perfiles públicos.
 - [ ] Dashboard de estadísticas personales (retos jugados, tasa de acierto por tema, evolución).
@@ -97,6 +106,7 @@ Tu hermana crea un reto nuevo desde cero en menos de 5 min, lo publica, lo juega
 - [ ] Documentación pública (README del repo, guía para profesores).
 
 ### Criterio de cierre
+
 Curso entero (40 alumnos) participa en torneo semanal con ranking persistente. PWA instalable funcionando. APK distribuible. Demo grabada del estado completo.
 
 ---

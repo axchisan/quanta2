@@ -4,7 +4,7 @@
 
 ## Formato
 
-```markdown
+````markdown
 ## <Título del reto>
 
 - **ID estable:** `<subject>-<topic>-<nn>` (ej: `kin-free-fall-01`)
@@ -35,9 +35,9 @@
 
 ### Inputs del jugador
 
-| Control | Rango | Default | Validación cliente |
-|---------|-------|---------|-------------------|
-| <ej: slider altura> | 1–100 m | 10 | number, bounds |
+| Control             | Rango   | Default | Validación cliente |
+| ------------------- | ------- | ------- | ------------------ |
+| <ej: slider altura> | 1–100 m | 10      | number, bounds     |
 
 ### Criterio de éxito
 
@@ -67,6 +67,7 @@ export const FallingBodyPayload = z.object({
   hiddenVariable: z.enum(['time', 'velocity']),
 });
 ```
+````
 
 ### Solution schema (server-only)
 
@@ -117,6 +118,7 @@ export const FallingBodyAttempt = z.object({
 ### Notas / referencias
 
 <Libros, papers, videos, retos similares existentes que inspiraron>
+
 ```
 
 ## Reglas
@@ -133,3 +135,4 @@ export const FallingBodyAttempt = z.object({
 - ❌ Validación solo en el cliente (cheat por devtools).
 - ❌ Assets sin fallback: si el sprite IA falla, el reto debe poder jugarse con placeholder.
 - ❌ Puntaje sin tope: jugadores que spammean intentos no pueden superar indefinidamente a los honestos.
+```

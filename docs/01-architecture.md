@@ -2,27 +2,27 @@
 
 ## Stack tecnológico
 
-| Capa | Tecnología | Notas |
-|------|-----------|-------|
-| Lenguaje | TypeScript estricto | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
-| Plataforma | Web (PWA) + Móvil (Capacitor) | Una sola base de código |
-| Framework web | Next.js 15 (App Router) | API Routes, Server Components, edge runtime |
-| UI | shadcn/ui + Tailwind CSS v4 | Componentes Radix accesibles |
-| Estado cliente | Zustand + TanStack Query | Store ligero + cache de servidor |
-| Motor 2D | Phaser 3 (gameplay) + React (UI) | Físicas Arcade y Matter.js |
-| Animaciones | Sprite sheets + Spine/DragonBones + Lottie + sprites IA | Pipeline soporta assets generados en runtime |
-| Audio | Howler.js + Web Audio API + IA generativa (cacheada) | Stack completo |
-| TTS | ElevenLabs (free) → Coqui XTTS / Piper (self-hosted) → Google/Azure (free tier) | Fallback chain |
-| Backend BaaS | Supabase **self-hosted** en Coolify | Postgres + Auth + Realtime + Storage + Edge Functions |
-| Auth | Híbrida: invitado (nickname + código sala) ⊕ cuenta (Magic Link / Google OAuth) | Vinculable sin perder progreso |
-| Multiplayer | Supabase Realtime (presencia/broadcast/rankings) + Colyseus (retos competitivos authoritative) | Híbrido por tipo |
-| LLMs | Gemini → Groq → OpenRouter | Gateway propio decide |
-| Imágenes IA | Pollinations.ai → Hugging Face → Gemini nativo | Cache en Supabase Storage |
-| Orquestación IA | `packages/ai-gateway` propio | Cache + rate limit + fallback + métricas |
-| Anti-cheat | Edge Functions + Colyseus authoritative | Cliente nunca calcula puntaje final |
-| Testing | Vitest + Testing Library + Playwright | Unit + integration + E2E |
-| CI/CD | GitHub Actions + Coolify auto-deploy | Docker en VPS |
-| Repo | pnpm workspaces + Turborepo | Tipos compartidos, builds cacheados |
+| Capa            | Tecnología                                                                                     | Notas                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Lenguaje        | TypeScript estricto                                                                            | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` |
+| Plataforma      | Web (PWA) + Móvil (Capacitor)                                                                  | Una sola base de código                                            |
+| Framework web   | Next.js 15 (App Router)                                                                        | API Routes, Server Components, edge runtime                        |
+| UI              | shadcn/ui + Tailwind CSS v4                                                                    | Componentes Radix accesibles                                       |
+| Estado cliente  | Zustand + TanStack Query                                                                       | Store ligero + cache de servidor                                   |
+| Motor 2D        | Phaser 3 (gameplay) + React (UI)                                                               | Físicas Arcade y Matter.js                                         |
+| Animaciones     | Sprite sheets + Spine/DragonBones + Lottie + sprites IA                                        | Pipeline soporta assets generados en runtime                       |
+| Audio           | Howler.js + Web Audio API + IA generativa (cacheada)                                           | Stack completo                                                     |
+| TTS             | ElevenLabs (free) → Coqui XTTS / Piper (self-hosted) → Google/Azure (free tier)                | Fallback chain                                                     |
+| Backend BaaS    | Supabase **self-hosted** en Coolify                                                            | Postgres + Auth + Realtime + Storage + Edge Functions              |
+| Auth            | Híbrida: invitado (nickname + código sala) ⊕ cuenta (Magic Link / Google OAuth)                | Vinculable sin perder progreso                                     |
+| Multiplayer     | Supabase Realtime (presencia/broadcast/rankings) + Colyseus (retos competitivos authoritative) | Híbrido por tipo                                                   |
+| LLMs            | Gemini → Groq → OpenRouter                                                                     | Gateway propio decide                                              |
+| Imágenes IA     | Pollinations.ai → Hugging Face → Gemini nativo                                                 | Cache en Supabase Storage                                          |
+| Orquestación IA | `packages/ai-gateway` propio                                                                   | Cache + rate limit + fallback + métricas                           |
+| Anti-cheat      | Edge Functions + Colyseus authoritative                                                        | Cliente nunca calcula puntaje final                                |
+| Testing         | Vitest + Testing Library + Playwright                                                          | Unit + integration + E2E                                           |
+| CI/CD           | GitHub Actions + Coolify auto-deploy                                                           | Docker en VPS                                                      |
+| Repo            | pnpm workspaces + Turborepo                                                                    | Tipos compartidos, builds cacheados                                |
 
 ## Diagrama de componentes (alto nivel)
 
@@ -76,6 +76,7 @@
 ## Flujos clave
 
 ### F1 — Estudiante invitado entra a una sala Kahoot
+
 1. Abre `quanta.axchisan.com` → ingresa nickname + código de sala (ej: `FIS-3B`).
 2. Next.js valida código contra Supabase (RLS lo permite si la sala existe y está abierta).
 3. Cliente se conecta a Supabase Realtime (`presence` + `broadcast`) y a Colyseus (room `kahoot:<id>`).
@@ -85,6 +86,7 @@
 7. Ranking actualiza vía `postgres_changes` en todos los clientes.
 
 ### F2 — Tu hermana crea un reto nuevo con IA
+
 1. Ingresa con cuenta (Magic Link) → entra al "Creador".
 2. Llena formulario: tema (cinemática), dificultad (media), tipo (multiple choice), prompt opcional (`"sobre tiro parabólico"`).
 3. Frontend llama a `POST /api/ai/generate-challenge` → AI Gateway:
@@ -96,6 +98,7 @@
 5. Publica → cambia estado a `published`, queda disponible en el catálogo y para crear salas.
 
 ### F3 — Generación de sprite con cache
+
 1. Game-engine necesita un sprite "vector de fuerza azul". Llama a `aiGateway.image({ prompt, hash })`.
 2. Gateway calcula `hash = sha256(prompt + model + params)`.
 3. Busca en Supabase Storage `sprites-cache/<hash>.webp`. Si existe, devuelve URL inmediatamente.
@@ -103,6 +106,7 @@
 5. Próxima request con mismo prompt = hit de cache, latencia <50ms.
 
 ### F4 — Auth invitado se vincula a cuenta
+
 1. Usuario juega como invitado, obtiene puntaje.
 2. Decide crear cuenta → se loguea con Google.
 3. Edge Function `link-guest-account` recibe `guestSessionId` + `userId`.
