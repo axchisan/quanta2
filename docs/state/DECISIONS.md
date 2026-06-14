@@ -26,6 +26,12 @@
 - **2026-04-19 — coordinator (db):** La migración inicial vive en `packages/db/supabase/migrations/` (default del Supabase CLI) y no en `packages/db/migrations/` como decía `docs/06-data-model.md`; documentado en `packages/db/CLAUDE.md`. PK de `room_memberships` materializada con columna generada (`member_key`) porque Postgres no permite PK sobre la expresión `COALESCE(...)` del doc.
 - **2026-04-19 — coordinator (db):** `db:gen-types` adaptado al CLI 2.106: sintaxis nueva `gen types --local` (sin positional `typescript`) + `SUPABASE_ACCESS_TOKEN` dummy inline (regresión que exige token aun en local). `packages/types/src/db.ts` ya es el `Database` real generado (no el placeholder). `onlyBuiltDependencies` (esbuild/sharp) movido de `package.json` a `pnpm-workspace.yaml` (nuevo home en pnpm 10).
 
+### 2026-06-14
+
+- **2026-06-14 — coordinator:** Infra desplegada en Coolify (web/game-server/Supabase self-hosted). Fase 0 cerrada. Ver [[quanta-deploy-infra]] / `infra/coolify.md`.
+- **2026-06-14 — ui-web (T008):** Operaciones de sala (create/join/snapshot) vía **Next.js API routes con service role** (`app/api/rooms/*`) en vez de Edge Functions de Supabase. Razón: simplicidad para el MVP, evita el ciclo de deploy de Edge Functions, y coincide con el flujo F1 del doc ("Next.js valida código contra Supabase"). Las Edge Functions quedan para lógica que deba correr fuera de Next (cron, webhooks). Reversible.
+- **2026-06-14 — ui-web (T008):** Presencia del lobby vía **Supabase Realtime presence** (canal `room:<id>`, anon key), no por lecturas de tabla con RLS de invitado (que es compleja: el invitado es el rol `anon`). Lecturas de datos de sala van por API routes (service role). Colyseus entra en Fase 2 para retos competitivos.
+
 ### Retro Sprint 0
 
 > A completar al cierre del sprint.
