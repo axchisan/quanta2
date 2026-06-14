@@ -11,7 +11,7 @@
     "db:stop": "supabase stop",
     "db:migrate": "supabase migration up --local",
     "db:reset": "supabase db reset --local",
-    "db:gen-types": "supabase gen types typescript --local > ../types/src/db.ts",
+    "db:gen-types": "SUPABASE_ACCESS_TOKEN=${SUPABASE_ACCESS_TOKEN:-local-dev} supabase gen types --local > ../types/src/db.ts",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf .turbo *.tsbuildinfo"

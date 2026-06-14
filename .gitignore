@@ -46,10 +46,10 @@ Thumbs.db
 # Phaser / asset intermediates
 *.phaserc
 
-# Supabase local
-supabase/.branches/
-supabase/.temp/
-supabase/.env
+# Supabase local (también en packages/db/supabase/)
+**/supabase/.branches/
+**/supabase/.temp/
+**/supabase/.env
 
 # Next.js
 .next/

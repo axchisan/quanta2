@@ -39,9 +39,9 @@ Tras cambiar el esquema y aplicar migraciones, correr `pnpm db:gen-types`. Esto 
 
 ## Requisitos: Docker + Supabase CLI
 
-`db:start`, `db:migrate`, `db:reset` y `db:gen-types` requieren **Docker** y la **Supabase CLI** (incluida como devDependency).
+`db:start`, `db:migrate`, `db:reset` y `db:gen-types` requieren **Docker** y la **Supabase CLI** (incluida como devDependency). Verificado end-to-end con Docker 29.5 + Supabase CLI 2.106.
 
-> ⚠️ **Bloqueado hasta que se instale Docker en la máquina.** Mientras tanto los archivos (config, migración, scripts) ya están listos y son correctos; solo no pueden ejecutarse. Una vez con Docker: `pnpm db:start && pnpm db:migrate && pnpm db:gen-types`.
+> **Quirk de `db:gen-types`:** el CLI 2.106 exige presencia de `SUPABASE_ACCESS_TOKEN` incluso para `gen types --local` (regresión "LegacyPlatformAuthRequired") y ya no acepta el positional `typescript`. El script setea un token dummy (`${SUPABASE_ACCESS_TOKEN:-local-dev}`) y usa la sintaxis nueva; no hace falta `supabase login` para generar tipos locales. La salida se reformatea con Prettier al correr `pnpm format`.
 
 ## Flujo de trabajo de una migración nueva
 

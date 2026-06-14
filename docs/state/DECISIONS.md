@@ -24,6 +24,7 @@
 - **2026-04-19 — coordinator:** `game-engine` testea con `phaser` **mockeado** (env node). El import real de Phaser ejecuta detección de canvas/WebGL que no existe headless; los tests cubren lógica pura (config/constantes/clase). Instanciar `new Phaser.Game` es manual/E2E, nunca unit.
 - **2026-04-19 — coordinator:** `game-server` usa vitest `pool: 'threads'` (el pool `forks` rompe la IPC de vitest con los mensajes binarios de Colyseus/msgpackr) y `gameServer.gracefullyShutdown(false)` en el handle de tests para no matar el worker con `process.exit`.
 - **2026-04-19 — coordinator (db):** La migración inicial vive en `packages/db/supabase/migrations/` (default del Supabase CLI) y no en `packages/db/migrations/` como decía `docs/06-data-model.md`; documentado en `packages/db/CLAUDE.md`. PK de `room_memberships` materializada con columna generada (`member_key`) porque Postgres no permite PK sobre la expresión `COALESCE(...)` del doc.
+- **2026-04-19 — coordinator (db):** `db:gen-types` adaptado al CLI 2.106: sintaxis nueva `gen types --local` (sin positional `typescript`) + `SUPABASE_ACCESS_TOKEN` dummy inline (regresión que exige token aun en local). `packages/types/src/db.ts` ya es el `Database` real generado (no el placeholder). `onlyBuiltDependencies` (esbuild/sharp) movido de `package.json` a `pnpm-workspace.yaml` (nuevo home en pnpm 10).
 
 ### Retro Sprint 0
 
