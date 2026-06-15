@@ -58,6 +58,7 @@ Todos viven en **env vars de Coolify** y en `apps/web/.env.local` (gitignored). 
 ## 6. Qué sigue (Fase 2, elegir con el usuario)
 
 Opciones pendientes, sin orden fijo:
+- **T017 — Investigación de diseño & assets** (pulido exponencial) → benchmark profundo de Kahoot/Duolingo y similares para construir un design system v2 + sistema de avatares animados. Es una task de **investigación** (genera un dossier; el pulido se deriva en T018+). Brief: `docs/research/design-benchmark/README.md`. Status `pending` en `TASKS.md`.
 - **Persistir resultados de sala** → atar el puntaje Kahoot a la cuenta Google para que cuente en "Mis puntajes". *Diseño abierto:* requiere autenticar al jugador dentro de la sala Colyseus (pasar el JWT al `join`, verificarlo server-side) y resolver el `challenge_id` (las preguntas Kahoot hoy son in-memory, no se persisten como `challenges`). Probablemente convenga una tabla `game_results` o persistir las preguntas generadas como `challenges`. **Hablalo con el usuario antes de codear.**
 - **Duelo 1v1** → nuevo modo (matchmaking 1v1, flujo alternado).
 - **Chat de sala** → social, más chico.
