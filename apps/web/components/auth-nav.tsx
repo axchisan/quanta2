@@ -7,26 +7,30 @@ import { useAuth } from '@/lib/auth/use-auth';
 export function AuthNav() {
   const { user, loading, signInWithGoogle, signOut } = useAuth();
 
+  if (loading) return <div className="h-9 w-24" />;
+
+  if (!user) {
+    return (
+      <Button size="sm" variant="outline" onClick={() => void signInWithGoogle()}>
+        Entrar con Google
+      </Button>
+    );
+  }
+
   return (
-    <nav className="flex h-12 items-center justify-end gap-3 px-4 text-sm">
-      {loading ? null : user ? (
-        <>
-          <span className="text-muted-foreground hidden sm:inline">{user.name ?? user.email}</span>
-          <Link
-            href="/mis-puntajes"
-            className="text-muted-foreground hover:text-foreground underline underline-offset-4"
-          >
-            Mis puntajes
-          </Link>
-          <Button size="sm" variant="outline" onClick={() => void signOut()}>
-            Salir
-          </Button>
-        </>
-      ) : (
-        <Button size="sm" variant="outline" onClick={() => void signInWithGoogle()}>
-          Entrar con Google
-        </Button>
-      )}
-    </nav>
+    <div className="flex items-center gap-3 text-sm">
+      <Link
+        href="/mis-puntajes"
+        className="text-foreground hover:text-primary hidden font-semibold sm:inline"
+      >
+        Mis puntajes
+      </Link>
+      <span className="text-muted-foreground hidden max-w-[10rem] truncate md:inline">
+        {user.name ?? user.email}
+      </span>
+      <Button size="sm" variant="ghost" onClick={() => void signOut()}>
+        Salir
+      </Button>
+    </div>
   );
 }
