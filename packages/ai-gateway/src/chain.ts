@@ -1,6 +1,6 @@
 import type { ProviderId } from '@quanta/types';
-import { AllProvidersFailedError } from './providers/types.js';
-import type { TextProvider } from './providers/types.js';
+import { AllProvidersFailedError } from './providers/types';
+import type { TextProvider } from './providers/types';
 
 /** Try text providers in order; return first success, else throw AllProvidersFailedError. */
 export async function runTextChain(

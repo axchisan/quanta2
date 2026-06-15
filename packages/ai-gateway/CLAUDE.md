@@ -4,9 +4,10 @@
 Cache + fallback chain + moderación + métricas viven acá. Leé `docs/07-ai-strategy.md` y
 `docs/agents/ai-gateway.md` antes de tocar.
 
-> Estado actual (T006): esqueleto con **fallback-chain y cache reales** pero **providers STUB**
-> (sin HTTP todavía). Los providers reales (Gemini/Groq/OpenRouter, Pollinations/HF, ElevenLabs/Coqui)
-> llegan en tasks posteriores.
+> Estado actual (T010): **provider Gemini real** (`createGeminiProvider`, `gemini-2.5-flash`,
+> safety máximo, JSON mode) usado por `generate-trivia`. `parseTriviaQuestion` valida el JSON con Zod.
+> Los demás providers (Groq/OpenRouter, Pollinations/HF, ElevenLabs/Coqui) siguen pendientes.
+> Imports relativos **sin extensión** (compat webpack/Next). Env: `GEMINI_API_KEY` (oblig.), `GEMINI_MODEL` (opc.).
 
 ## Estructura
 

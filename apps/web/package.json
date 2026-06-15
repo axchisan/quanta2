@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@quanta/ai-gateway": "workspace:*",
     "@quanta/db": "workspace:*",
     "@quanta/game-engine": "workspace:*",
     "@quanta/types": "workspace:*",
