@@ -162,6 +162,16 @@
   - **Pendiente de prueba humana:** el clic final de login en el consent de Google (interactivo).
 - **Notes:** El cliente OAuth de Google lo creó el usuario (creds en env del servicio Supabase, no en el repo).
 
+### T013 — Rediseño "Edu-friendly suave" (pulido, fundación)
+
+- **Owner:** ui-web
+- **Status:** done (2026-06-15) — fundación; iteración por página continúa
+- **Priority:** P1
+- **Sprint:** 1
+- **Description:** Pulido visual/UX. Theme pastel (lavanda/menta/durazno, esquinas redondeadas, sombras suaves) en `@quanta/ui/tokens.css`; componentes `Card`/`Badge` + `Button`/`Input` ablandados (pill, soft). Fuentes redondeadas (Baloo 2 display + Nunito) vía next/font. Mascota átomo sonriente. Header con marca + nav. IA reorganizada: landing (hero + CTA "Jugar" + salas en beta) y nuevo hub `/jugar` (catálogo de retos). Las páginas de retos heredan el theme por tokens.
+- **Acceptance:** landing + `/jugar` renderizan con el nuevo look; `lint/typecheck/test/build` verdes. Limpieza de datos de prueba en prod (conservando la cuenta del usuario).
+- **Notes:** Dirección elegida por el usuario. Pendiente: pulido fino por página (retos), audio (SFX/TTS), y revisión visual en prod.
+
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 
 - **B001** — Configurar Husky + lint-staged en pre-commit.
