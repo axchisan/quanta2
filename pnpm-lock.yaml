@@ -25,9 +25,15 @@ importers:
 
   apps/game-server:
     dependencies:
+      '@colyseus/schema':
+        specifier: ^3.0.76
+        version: 3.0.76
       '@colyseus/ws-transport':
         specifier: ^0.16.0
         version: 0.16.5(@colyseus/core@0.16.24(@colyseus/schema@3.0.76)(@pm2/io@6.1.0))
+      '@quanta/ai-gateway':
+        specifier: workspace:*
+        version: link:../../packages/ai-gateway
       '@quanta/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -83,6 +89,9 @@ importers:
       '@quanta/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      colyseus.js:
+        specifier: ^0.16.22
+        version: 0.16.22
       next:
         specifier: ^15.1.3
         version: 15.5.19(react-dom@19.2.7(react@19.2.7))(react@19.2.7)

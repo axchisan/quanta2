@@ -182,6 +182,18 @@
 - **Acceptance:** las 6 rutas renderizan 200; `ResultPanel` suena y muestra la mascota; `lint/typecheck/test/build` verdes. Docs de estado actualizados.
 - **Notes:** Narración TTS y sprites IA quedan diferidos (faltan providers). Cierra Fase 1 ~95%.
 
+### T015 — Sala Kahoot multiplayer (Fase 2, core)
+
+- **Owner:** backend-realtime / ui-web
+- **Status:** done (2026-06-15)
+- **Priority:** P0 (Fase 2)
+- **Sprint:** 2
+- **Description:** Primer slice de Fase 2. `KahootRoom` en Colyseus (estado authoritative `@colyseus/schema`): el server genera N preguntas de trivia con Gemini (en background, no bloquea matchmaking), corre el game loop (lobby → pregunta 20s → reveal → … → finished), valida respuestas y puntúa server-side. **Anti-cheat:** `correctIndex` nunca se sincroniza durante la pregunta (solo en el reveal). Web: cliente `colyseus.js` + página `/sala` (crear/unirse por código, lobby, pregunta con timer, leaderboard en vivo, sonido). Landing "Jugar con amigos" → `/sala` (reemplaza el dead-end del lobby T008).
+- **Acceptance:**
+  - KahootRoom verificada end-to-end con cliente Node contra **Gemini real**: genera preguntas, 2 jugadores, flujo completo, `correctIndex` oculto durante la pregunta y revelado en el reveal.
+  - `/sala` SSR 200; `lint/typecheck/test/build` verdes. `GEMINI_API_KEY` seteada en el game-server de Coolify (aplica al redeploy).
+- **Notes:** Falta prueba humana multi-dispositivo en prod. Pendiente Fase 2: Duelo 1v1, reconexión, chat, persistir resultados de sala.
+
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 
 - **B001** — Configurar Husky + lint-staged en pre-commit.

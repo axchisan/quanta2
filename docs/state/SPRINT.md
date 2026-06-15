@@ -48,6 +48,7 @@
 ### Updates (anyone can append)
 
 - 2026-06-15 — coordinator: Fase 0 + infra + 5 features de Fase 1 (T008–T013) cerradas y en prod. Docs de estado actualizados. Arranca T014 (cierre Fase 1: audio + pulido + mobile).
+- 2026-06-15 — coordinator: T014 cierra Fase 1 (~95%). **Arranca Fase 2** con T015 — Sala Kahoot multiplayer en Colyseus (estado authoritative + preguntas IA + anti-cheat), verificada end-to-end con cliente Node contra Gemini real.
 
 ### Blockers activos
 

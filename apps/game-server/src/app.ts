@@ -3,6 +3,7 @@ import type { Server as HttpServer } from 'node:http';
 import { Server } from 'colyseus';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import { LobbyRoom } from './rooms/lobby-room.js';
+import { KahootRoom } from './rooms/kahoot-room.js';
 
 export interface GameServerHandle {
   gameServer: Server;
@@ -28,6 +29,7 @@ export function createGameServer(port: number): GameServerHandle {
   });
 
   gameServer.define('lobby', LobbyRoom);
+  gameServer.define('kahoot', KahootRoom);
 
   return {
     gameServer,
