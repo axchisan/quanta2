@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@quanta/ui';
 import type { AttemptResult, Challenge, EquationSpecies } from '@quanta/types';
+import { ResultPanel } from '@/components/result-panel';
 import { submitAttemptRequest } from '@/lib/challenges/client';
 
 interface EqPayload {
@@ -150,18 +151,12 @@ export function EquationBalancePlay({ challenge }: { challenge: Challenge }) {
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
 
       {result ? (
-        <div
-          className={`rounded-xl border p-5 ${result.isCorrect ? 'border-primary/40 bg-primary/10' : 'border-destructive/40 bg-destructive/10'}`}
-        >
-          <p className="text-lg font-bold">
-            {result.isCorrect ? '¡Correcto! 🎉' : 'Todavía no'}{' '}
-            <span className="text-primary">+{result.score} pts</span>
-          </p>
-          <p className="text-muted-foreground mt-2 text-sm">{result.explanation}</p>
-          <Button className="mt-4" variant="secondary" onClick={retry}>
-            Reintentar
-          </Button>
-        </div>
+        <ResultPanel
+          isCorrect={result.isCorrect}
+          score={result.score}
+          explanation={result.explanation}
+          onRetry={retry}
+        />
       ) : null}
     </main>
   );

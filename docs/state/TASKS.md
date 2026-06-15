@@ -172,6 +172,16 @@
 - **Acceptance:** landing + `/jugar` renderizan con el nuevo look; `lint/typecheck/test/build` verdes. Limpieza de datos de prueba en prod (conservando la cuenta del usuario).
 - **Notes:** Dirección elegida por el usuario. Pendiente: pulido fino por página (retos), audio (SFX/TTS), y revisión visual en prod.
 
+### T014 — Cierre de Fase 1 (audio + pulido + mobile)
+
+- **Owner:** ui-web
+- **Status:** done (2026-06-15)
+- **Priority:** P1
+- **Sprint:** 1
+- **Description:** Cierre del MVP. **Audio SFX** sintetizado con Web Audio (éxito/error/click, sin assets). `ResultPanel` compartido por los 3 retos: mascota átomo que reacciona (rebota al acertar) + sonido + feedback consistente. Pulido por página (Card/Badge, theme pastel heredado) y revisión responsive.
+- **Acceptance:** las 6 rutas renderizan 200; `ResultPanel` suena y muestra la mascota; `lint/typecheck/test/build` verdes. Docs de estado actualizados.
+- **Notes:** Narración TTS y sprites IA quedan diferidos (faltan providers). Cierra Fase 1 ~95%.
+
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 
 - **B001** — Configurar Husky + lint-staged en pre-commit.
