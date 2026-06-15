@@ -1,9 +1,24 @@
 import { NextResponse } from 'next/server';
-import { RoomError } from '@/lib/rooms/service';
+
+interface HttpError {
+  code: string;
+  message: string;
+  status: number;
+}
+
+function isHttpError(e: unknown): e is HttpError {
+  return (
+    typeof e === 'object' &&
+    e !== null &&
+    'code' in e &&
+    'status' in e &&
+    typeof (e as { status: unknown }).status === 'number'
+  );
+}
 
 /** Convierte errores en respuestas JSON con código semántico (sin filtrar internals). */
 export function errorResponse(e: unknown): NextResponse {
-  if (e instanceof RoomError) {
+  if (isHttpError(e)) {
     return NextResponse.json({ error: { code: e.code, message: e.message } }, { status: e.status });
   }
   console.error('[api] error inesperado', e);
