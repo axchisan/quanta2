@@ -31,6 +31,9 @@
 - **2026-06-14 — coordinator:** Infra desplegada en Coolify (web/game-server/Supabase self-hosted). Fase 0 cerrada. Ver [[quanta-deploy-infra]] / `infra/coolify.md`.
 - **2026-06-14 — ui-web (T008):** Operaciones de sala (create/join/snapshot) vía **Next.js API routes con service role** (`app/api/rooms/*`) en vez de Edge Functions de Supabase. Razón: simplicidad para el MVP, evita el ciclo de deploy de Edge Functions, y coincide con el flujo F1 del doc ("Next.js valida código contra Supabase"). Las Edge Functions quedan para lógica que deba correr fuera de Next (cron, webhooks). Reversible.
 - **2026-06-14 — ui-web (T008):** Presencia del lobby vía **Supabase Realtime presence** (canal `room:<id>`, anon key), no por lecturas de tabla con RLS de invitado (que es compleja: el invitado es el rol `anon`). Lecturas de datos de sala van por API routes (service role). Colyseus entra en Fase 2 para retos competitivos.
+- **2026-06-14 — game-engine (T009):** `@quanta/game-engine` usa imports relativos **sin extensión** (no `.js`): el `.js` rompe la resolución de webpack cuando Next lo consume vía dynamic import (tsc/tsup sí resuelven, webpack no). El `GameCanvas` importa Phaser y el motor **dinámicamente** (sin SSR).
+- **2026-06-14 — ui-web (T009):** Phaser 3.90 expone su build ESM (`module`) **sin `export default`**, rompiendo `import Phaser from 'phaser'` bajo webpack. Fix en `next.config.ts`: alias `phaser$ → phaser/dist/phaser.js` (UMD, interopera el default). `phaser` declarado como dep directa de `apps/web`.
+- **2026-06-14 — backend (T009):** Tiempo del intento (`time_taken_ms`) es **client-reported** en modo solo (clamp server-side). El timing authoritative server-side llega con Colyseus/Edge Functions en Fase 2; documentado como simplificación de MVP. Intentos solo se persisten anónimos (sin `guest_session`, que requiere sala).
 
 ### Retro Sprint 0
 

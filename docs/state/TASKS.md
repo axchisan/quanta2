@@ -112,6 +112,18 @@
   - Crear→unirse→snapshot verificado **contra el Supabase de producción** (`db.quanta.axchisan.com`): filas en `rooms`/`guest_sessions`/`room_memberships`, nickname repetido→409, código inexistente→404.
   - `lint/typecheck/test/build` verdes; landing y lobby renderizan.
 
+### T009 — Reto Caída Libre (Fase 1, solo jugable)
+
+- **Owner:** game-engine / ui-web / backend-realtime
+- **Status:** done (2026-06-14)
+- **Priority:** P0
+- **Sprint:** 1
+- **Description:** Reto de Física (cinemática) jugable solo end-to-end: escena Phaser `FreeFallScene` + `createFreeFallGame` + `freeFallTime` (motor), `GameCanvas` (import dinámico de Phaser, sin SSR), página `/jugar/[slug]` con sliders de altura/gravedad + presets + predicción. Validación y **scoring server-side** (`/api/attempts/submit`): `t = √(2h/g)`, tolerancia 10%, fórmula de puntaje de `docs/08`. Reto sembrado en `challenges` (migración `0002`).
+- **Acceptance:**
+  - Seed aplicado a prod; `GET /api/challenges/caida-libre` devuelve el reto **sin `solution`** (anti-cheat).
+  - `POST /api/attempts/submit` verificado contra prod: predicción correcta → `score 187`, incorrecta → `score 0`, `correctValue` server-side; intento persistido en `challenge_attempts`.
+  - Página `/jugar/caida-libre` SSR 200 con controles; `lint/typecheck/test/build` verdes.
+
 ---
 
 ## Backlog (sin sprint asignado)
