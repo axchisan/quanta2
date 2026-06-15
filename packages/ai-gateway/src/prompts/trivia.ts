@@ -37,7 +37,10 @@ export function buildTriviaPrompt(input: TriviaPromptInput): string {
   const audience = input.audience ?? 'secundaria';
   const lines = [
     `Generá una pregunta de trivia sobre "${input.topic}" con dificultad ${input.difficulty}.`,
-    'Devolvé JSON con: question, options (array de 4), correctIndex, explanation.',
+    'Devolvé JSON con: question, options (array de 4), correctIndex, answer, explanation.',
+    '- "answer" debe ser el TEXTO EXACTO (idéntico) de la opción correcta dentro de "options".',
+    '- "correctIndex" (0-3) debe apuntar a esa misma opción.',
+    '- Verificá que correctIndex, answer y explanation sean coherentes entre sí antes de responder.',
   ];
   if (input.nonce !== undefined) {
     lines.push(
