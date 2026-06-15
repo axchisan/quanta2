@@ -12,12 +12,20 @@ export default function HomePage() {
         </p>
       </div>
       <EntryCard />
-      <Link
-        href="/jugar/caida-libre"
-        className="text-muted-foreground hover:text-foreground text-sm underline underline-offset-4"
-      >
-        o practicá solo: Caída Libre 🪂
-      </Link>
+      <div className="text-muted-foreground flex flex-col items-center gap-2 text-sm">
+        <span>o practicá solo:</span>
+        <div className="flex gap-4">
+          <Link
+            href="/jugar/caida-libre"
+            className="hover:text-foreground underline underline-offset-4"
+          >
+            Caída Libre 🪂
+          </Link>
+          <Link href="/jugar/trivia" className="hover:text-foreground underline underline-offset-4">
+            Trivia IA 🧠
+          </Link>
+        </div>
+      </div>
     </main>
   );
 }

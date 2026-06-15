@@ -68,6 +68,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.79.0(react@19.2.7))
+      '@quanta/ai-gateway':
+        specifier: workspace:*
+        version: link:../../packages/ai-gateway
       '@quanta/db':
         specifier: workspace:*
         version: link:../../packages/db
