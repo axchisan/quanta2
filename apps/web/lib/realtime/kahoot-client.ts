@@ -89,3 +89,8 @@ export function createKahootRoom(opts: {
 export function joinKahootRoom(roomId: string, nickname: string): Promise<Room> {
   return getClient().joinById(roomId, { nickname });
 }
+
+/** Reconecta a una sala tras una caída usando el token de reconexión de Colyseus. */
+export function reconnectKahootRoom(reconnectionToken: string): Promise<Room> {
+  return getClient().reconnect(reconnectionToken);
+}
