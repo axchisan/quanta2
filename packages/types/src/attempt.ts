@@ -26,6 +26,18 @@ export interface FreeFallAnswer {
   predictedTimeSeconds: number;
 }
 
+/** Una especie química de una ecuación a balancear. */
+export interface EquationSpecies {
+  formula: string;
+  side: 'reactant' | 'product';
+  atoms: Record<string, number>;
+}
+
+/** Respuesta del jugador para un reto de balanceo: un coeficiente por especie. */
+export interface EquationBalanceAnswer {
+  coefficients: number[];
+}
+
 /** Resultado de un intento, devuelto al cliente tras la validación server-side. */
 export interface AttemptResult {
   isCorrect: boolean;

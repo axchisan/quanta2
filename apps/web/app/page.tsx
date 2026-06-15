@@ -21,6 +21,12 @@ export default function HomePage() {
           >
             Caída Libre 🪂
           </Link>
+          <Link
+            href="/jugar/balanceo-metano"
+            className="hover:text-foreground underline underline-offset-4"
+          >
+            Balanceo ⚗️
+          </Link>
           <Link href="/jugar/trivia" className="hover:text-foreground underline underline-offset-4">
             Trivia IA 🧠
           </Link>
