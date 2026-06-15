@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Badge, Button, Card } from '@quanta/ui';
 import { AtomMascot } from '@/components/atom-mascot';
-import { EntryCard } from '@/app/components/entry-card';
 import { siteConfig } from '@/app/lib/site';
 
 export default function HomePage() {
@@ -20,15 +19,17 @@ export default function HomePage() {
         <Link href="/jugar">▶ Empezá a jugar</Link>
       </Button>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md text-center">
         <div className="flex items-center justify-center gap-2">
           <span className="font-display text-lg font-bold">Jugar con amigos</span>
-          <Badge variant="secondary">beta</Badge>
+          <Badge variant="secondary">en vivo</Badge>
         </div>
-        <p className="text-muted-foreground mt-1 text-sm">Creá una sala y compartí el código.</p>
-        <div className="mt-4">
-          <EntryCard />
-        </div>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Creá una sala Kahoot, compartí el código y compitan respondiendo trivia en tiempo real.
+        </p>
+        <Button asChild variant="accent" size="lg" className="mt-4">
+          <Link href="/sala">Crear o unirse a una sala</Link>
+        </Button>
       </Card>
     </main>
   );
