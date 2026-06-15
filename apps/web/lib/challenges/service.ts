@@ -1,11 +1,21 @@
 import type { createServiceClient } from '@quanta/db';
 import type { TriviaQuestion } from '@quanta/ai-gateway';
-import type { AttemptResult, Challenge, Difficulty, FreeFallAnswer } from '@quanta/types';
+import type {
+  AttemptResult,
+  Challenge,
+  Difficulty,
+  EquationSpecies,
+  FreeFallAnswer,
+} from '@quanta/types';
 import type { Json } from '@quanta/types/db';
 import { rowToChallenge } from './mappers';
-import { freeFallAnswerSchema, multipleChoiceAnswerSchema } from './schemas';
+import {
+  equationBalanceAnswerSchema,
+  freeFallAnswerSchema,
+  multipleChoiceAnswerSchema,
+} from './schemas';
 import { computeScore } from './scoring';
-import { validateFreeFall, type ValidationOutcome } from './validators';
+import { validateEquationBalance, validateFreeFall, type ValidationOutcome } from './validators';
 
 type Db = ReturnType<typeof createServiceClient>;
 
@@ -119,6 +129,15 @@ export async function submitAttempt(db: Db, input: SubmitAttemptInput): Promise<
       submittedValue: answer.selectedIndex,
     };
     explanation = typeof solution.explanation === 'string' ? solution.explanation : '';
+  } else if (payload.type === 'equation_balance') {
+    const answer = equationBalanceAnswerSchema.parse(input.submittedAnswer);
+    const species = ((payload as { species?: EquationSpecies[] }).species ??
+      []) as EquationSpecies[];
+    outcome = validateEquationBalance(species, answer.coefficients);
+    const solCoeffs = Array.isArray(solution.coefficients)
+      ? (solution.coefficients as number[])
+      : [];
+    explanation = buildEquationExplanation(species, solCoeffs, outcome.isCorrect);
   } else {
     throw new ChallengeError('unsupported_kind', 'Tipo de reto no soportado aún', 422);
   }
@@ -150,6 +169,23 @@ export async function submitAttempt(db: Db, input: SubmitAttemptInput): Promise<
     submittedValue: outcome.submittedValue,
     explanation,
   };
+}
+
+function buildEquationExplanation(
+  species: EquationSpecies[],
+  coefficients: number[],
+  isCorrect: boolean,
+): string {
+  const render = (side: 'reactant' | 'product'): string =>
+    species
+      .map((s, i) => ({ s, c: coefficients[i] ?? 1 }))
+      .filter((x) => x.s.side === side)
+      .map((x) => `${x.c === 1 ? '' : `${x.c} `}${x.s.formula}`)
+      .join(' + ');
+  const balanced = `${render('reactant')} → ${render('product')}`;
+  return isCorrect
+    ? `¡Correcto! La ecuación balanceada es: ${balanced}`
+    : `Todavía no balancea. La forma correcta es: ${balanced}`;
 }
 
 function buildFreeFallExplanation(
