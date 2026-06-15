@@ -43,7 +43,7 @@ VPS Coolify propio — `147.93.178.204`. Acceso por MCP `mcp__coolify__*` (toda 
 2. **Phaser bajo webpack:** alias `phaser$ → phaser/dist/phaser.js` (UMD) en `apps/web/next.config.ts`. El build ESM de Phaser no exporta default → `import Phaser from 'phaser'` rompe sin el alias. `phaser` es dep directa de `apps/web`.
 3. **Colyseus `onCreate` NO debe ser bloqueante.** Generar preguntas con Gemini va **en background** (`void this.generateQuestions()`), con flag `ready`. Un `onCreate` async que espere a la IA → timeout de matchmaking → "socket hang up".
 4. **Anti-cheat:** la `solution`/`correctIndex` **nunca** viaja al cliente durante la pregunta. En Kahoot, `correctIndex` se mantiene en `-1` en el state sincronizado y solo se setea en el `reveal`.
-5. **Modelo Gemini por defecto: `gemini-2.5-flash`** (configurable con `GEMINI_MODEL`). El key del usuario tiene cuota 0 en `gemini-2.0-flash`.
+5. **IA de texto: Groq primario, Gemini fallback** (T019). Gemini (`gemini-2.5-flash`) da **503** en horas pico → sin fallback la sala se cuelga sin preguntas. Groq (`llama-3.3-70b-versatile`, `GROQ_API_KEY`) es el primario. La generación de preguntas Kahoot va **en paralelo** (`Promise.allSettled`). Env: `GROQ_API_KEY` y/o `GEMINI_API_KEY`.
 6. **Tests:** game-server usa vitest `pool: 'threads'` (forks rompe la IPC binaria de Colyseus) + `gameServer.gracefullyShutdown(false)`. game-engine testea con `phaser` **mockeado** (env node; el Phaser real necesita canvas/WebGL).
 7. **Una rama por task** (`feat/<rol>-<Txxx>-<slug>`), PR contra `main`, esperar CI verde, el **usuario mergea**. Verificá no estar construyendo sobre una rama ya mergeada (revisá `git log origin/main` antes de ramificar).
 
