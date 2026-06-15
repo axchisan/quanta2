@@ -86,9 +86,51 @@ export class KahootRoom extends Room<KahootState> {
     if (!this.state.hostId) this.state.hostId = client.sessionId;
   }
 
-  override onLeave(client: Client): void {
+  override async onLeave(client: Client, consented: boolean): Promise<void> {
     const player = this.state.players.get(client.sessionId);
-    if (player) player.connected = false;
+    if (!player) return;
+    player.connected = false;
+
+    if (consented) {
+      this.removePlayer(client.sessionId);
+      return;
+    }
+    try {
+      // Reconexión: el cliente tiene 30s para volver con el mismo sessionId.
+      await this.allowReconnection(client, 30);
+      const back = this.state.players.get(client.sessionId);
+      if (back) back.connected = true;
+    } catch {
+      this.removePlayer(client.sessionId);
+    }
+  }
+
+  private removePlayer(sessionId: string): void {
+    this.state.players.delete(sessionId);
+    if (sessionId === this.state.hostId) this.migrateHost();
+    this.maybeAdvanceAfterLeave();
+  }
+
+  /** Si el anfitrión se va, pasa el rol al primer jugador conectado. */
+  private migrateHost(): void {
+    let newHost = '';
+    this.state.players.forEach((p, id) => {
+      if (!newHost && p.connected) newHost = id;
+    });
+    this.state.hostId = newHost;
+  }
+
+  /** Si en 'question' ya respondieron todos los que quedan, avanzar. */
+  private maybeAdvanceAfterLeave(): void {
+    if (this.state.phase !== 'question') return;
+    let pending = false;
+    this.state.players.forEach((p) => {
+      if (p.connected && !p.answered) pending = true;
+    });
+    if (!pending && this.state.players.size > 0) {
+      this.clock.clear();
+      this.endQuestion();
+    }
   }
 
   private handleStart(client: Client): void {
