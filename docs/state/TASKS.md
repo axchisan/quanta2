@@ -329,10 +329,19 @@
 
 ### T024 — Validación de coherencia de respuestas IA
 
-- **Owner:** ai-gateway · **Status:** pending · **Priority:** P1 · **Sprint:** 2/3
+- **Owner:** ai-gateway · **Status:** review (2026-06-15) — rama `feat/ai-gateway-T024-coherencia-respuestas`
+- **Priority:** P1 · **Sprint:** 2/3
 - **Description:** El LLM a veces devuelve un `correctIndex` que **no coincide** con su propia
-  explicación (visto con Groq y Gemini). Añadir verificación: re-prompt de auto-chequeo o
-  validación cruzada para descartar/corregir preguntas incoherentes antes de mostrarlas.
+  explicación (visto con Groq y Gemini). **Solución (sin llamadas extra):** el prompt ahora pide
+  también `answer` = el TEXTO EXACTO de la opción correcta; `parseTriviaQuestion` **reconcilia**
+  el `correctIndex` para que apunte a la opción cuyo texto coincide con `answer` (normalizado:
+  espacios/mayúsculas/puntuación). El texto refleja mejor el razonamiento del modelo que el índice,
+  que es donde suele equivocarse. `answer` no se expone en el shape final.
+- **Acceptance:** tests de reconciliación (índice incoherente → corregido; formato tolerante; answer
+  inexistente → mantiene índice; answer no expuesto). Smoke test real contra Groq: devuelve `answer`
+  coherente. `lint/typecheck/test/build` verdes (ai-gateway 16).
+- **Notes:** v1 garantiza coherencia índice↔texto↔explicación. Verificar que la respuesta sea
+  **físicamente correcta** (solver/segundo modelo) queda como mejora futura si hace falta.
 
 ---
 
