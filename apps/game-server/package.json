@@ -13,7 +13,9 @@
     "clean": "rm -rf dist .turbo *.tsbuildinfo"
   },
   "dependencies": {
+    "@colyseus/schema": "^3.0.76",
     "@colyseus/ws-transport": "^0.16.0",
+    "@quanta/ai-gateway": "workspace:*",
     "@quanta/types": "workspace:*",
     "colyseus": "^0.16.0"
   },
