@@ -5,9 +5,17 @@ Las salas son la **fuente de verdad** del estado de juego: el cliente propone, e
 
 ## Estado actual
 
-Skeleton inicial (T004). Solo existe `LobbyRoom` como placeholder con un latido
-(`heartbeat`) para validar el transporte WebSocket de punta a punta. Las salas reales
-(`KahootRoom`, `DuelRoom`, `CoopRoom`) se construyen sobre esta base.
+`LobbyRoom` (placeholder con heartbeat, T004) + `KahootRoom` (Fase 2: T015 core, T016
+reconexión/migración de host, T018 persistencia de resultados). `DuelRoom`/`CoopRoom`
+pendientes.
+
+**Persistencia de resultados (T018).** Al `finish`, `KahootRoom` persiste el resultado
+agregado por jugador **logueado** en la tabla `game_results` (ver `packages/db`), en
+background (nunca bloquea el game loop). El jugador se autentica pasando su `access_token`
+de Supabase en `create`/`join`; el server lo verifica con `auth.getUser` (`src/db/supabase.ts`,
+service role) y guarda el `user_id` en un Map privado por `sessionId` (no se sincroniza).
+Requiere `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` en el entorno (ya en Coolify); si
+faltan, la persistencia hace no-op silencioso (dev/tests).
 
 ## Estructura
 

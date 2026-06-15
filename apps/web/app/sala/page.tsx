@@ -5,6 +5,8 @@ import Link from 'next/link';
 import type { Room } from 'colyseus.js';
 import { Badge, Button, Card, Input } from '@quanta/ui';
 import { playSfx } from '@/lib/audio/sfx';
+import { useAuth } from '@/lib/auth/use-auth';
+import { getBrowserClient } from '@/lib/supabase/browser';
 import {
   createKahootRoom,
   joinKahootRoom,
@@ -20,7 +22,18 @@ const DIFFS = [
   { label: 'Difícil', v: 'hard' },
 ] as const;
 
+/** Token de Supabase del usuario logueado (para atribuir el resultado a su cuenta). */
+async function getAccessToken(): Promise<string | undefined> {
+  try {
+    const { data } = await getBrowserClient().auth.getSession();
+    return data.session?.access_token;
+  } catch {
+    return undefined;
+  }
+}
+
 export default function SalaPage() {
+  const { user } = useAuth();
   const roomRef = useRef<Room | null>(null);
   const [snap, setSnap] = useState<KahootSnapshot | null>(null);
   const [sessionId, setSessionId] = useState('');
@@ -114,7 +127,15 @@ export default function SalaPage() {
     setError(null);
     setBusy(true);
     try {
-      bind(await createKahootRoom({ nickname: nickname.trim(), topic, difficulty }));
+      const accessToken = await getAccessToken();
+      bind(
+        await createKahootRoom({
+          nickname: nickname.trim(),
+          topic,
+          difficulty,
+          ...(accessToken ? { accessToken } : {}),
+        }),
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo crear la sala');
     } finally {
@@ -126,7 +147,8 @@ export default function SalaPage() {
     setError(null);
     setBusy(true);
     try {
-      bind(await joinKahootRoom(code.trim(), nickname.trim()));
+      const accessToken = await getAccessToken();
+      bind(await joinKahootRoom(code.trim(), nickname.trim(), accessToken));
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo unir a la sala');
     } finally {
@@ -205,6 +227,11 @@ export default function SalaPage() {
             Unirme
           </Button>
           {error ? <p className="text-destructive text-sm">{error}</p> : null}
+          <p className="text-muted-foreground text-center text-xs">
+            {user
+              ? '✓ Tu puntaje de la partida se guardará en “Mis puntajes”.'
+              : 'Entrá con tu cuenta para que tu puntaje cuente en “Mis puntajes”.'}
+          </p>
         </Card>
       </main>
     );
@@ -321,9 +348,16 @@ export default function SalaPage() {
             ))}
           </ol>
           {snap.phase === 'finished' ? (
-            <Button asChild className="mt-4 w-full" variant="secondary">
-              <Link href="/">Volver al inicio</Link>
-            </Button>
+            <div className="mt-4 grid gap-2">
+              {user ? (
+                <Button asChild className="w-full">
+                  <Link href="/mis-puntajes">Ver en Mis puntajes</Link>
+                </Button>
+              ) : null}
+              <Button asChild className="w-full" variant="secondary">
+                <Link href="/">Volver al inicio</Link>
+              </Button>
+            </div>
           ) : null}
         </Card>
       ) : null}
