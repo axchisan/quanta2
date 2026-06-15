@@ -2,8 +2,13 @@ import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
 import { Room } from 'colyseus';
 import type { Client } from 'colyseus';
 import { parseTriviaQuestion } from '@quanta/ai-gateway';
-import type { TriviaQuestion } from '@quanta/ai-gateway';
+import type { TriviaAudience, TriviaQuestion } from '@quanta/ai-gateway';
 import { getAIGateway } from '../ai/gateway.js';
+
+const AUDIENCES: readonly TriviaAudience[] = ['ninos', 'secundaria', 'universidad'];
+function normalizeAudience(value: string | undefined): TriviaAudience {
+  return AUDIENCES.includes(value as TriviaAudience) ? (value as TriviaAudience) : 'secundaria';
+}
 import { persistGameResults, verifyAccessToken, type GameResultRow } from '../db/supabase.js';
 
 const QUESTION_MS = 20_000;
@@ -24,6 +29,8 @@ export class KahootState extends Schema {
   @type('string') phase = 'lobby';
   /** false hasta que terminó de generar las preguntas con IA. */
   @type('boolean') ready = false;
+  /** true si terminó de generar pero no se obtuvo ninguna pregunta (todos los proveedores fallaron). */
+  @type('boolean') genFailed = false;
   @type('string') topic = '';
   @type('number') questionIndex = -1;
   @type('number') totalQuestions = 0;
@@ -40,6 +47,7 @@ interface KahootCreateOptions {
   nickname?: string;
   topic?: string;
   difficulty?: string;
+  audience?: string;
   count?: number;
   /** JWT de Supabase del jugador logueado (opcional: invitados no lo envían). */
   accessToken?: string;
@@ -51,6 +59,9 @@ export class KahootRoom extends Room<KahootState> {
 
   private questions: TriviaQuestion[] = [];
   private questionStartedAt = 0;
+  private difficulty = 'easy';
+  private audience: TriviaAudience = 'secundaria';
+  private count = 5;
   /** sessionId → user id de Supabase (solo jugadores logueados). Privado: no se sincroniza. */
   private readonly userIds = new Map<string, string>();
   /** sessionId → cantidad de respuestas correctas en la partida. */
@@ -59,33 +70,68 @@ export class KahootRoom extends Room<KahootState> {
 
   override onCreate(options: KahootCreateOptions): void {
     const state = new KahootState();
-    state.topic = (options.topic ?? 'Cinemática').slice(0, 48);
+    state.topic = (options.topic ?? 'Cinemática').trim().slice(0, 64) || 'Cinemática';
     this.setState(state);
+
+    this.difficulty = options.difficulty ?? 'easy';
+    this.audience = normalizeAudience(options.audience);
+    this.count = Math.min(Math.max(options.count ?? 5, 1), 10);
 
     this.onMessage('start', (client) => this.handleStart(client));
     this.onMessage('answer', (client, message: { index?: number }) =>
       this.handleAnswer(client, message),
     );
+    this.onMessage('regenerate', (client) => this.handleRegenerate(client));
 
-    const difficulty = options.difficulty ?? 'easy';
-    const count = Math.min(Math.max(options.count ?? 5, 1), 10);
     // En background: generar bloquearía la respuesta de matchmaking (timeout).
-    void this.generateQuestions(state.topic, difficulty, count);
+    void this.generateQuestions();
   }
 
-  private async generateQuestions(topic: string, difficulty: string, count: number): Promise<void> {
+  /** Genera todas las preguntas en paralelo (mucho más rápido que en serie) y
+   *  tolera la caída de un proveedor: conserva las que sí se generaron. */
+  private async generateQuestions(): Promise<void> {
+    this.state.ready = false;
+    this.state.genFailed = false;
+    this.questions = [];
+    this.state.totalQuestions = 0;
     try {
       const gateway = getAIGateway();
-      for (let i = 0; i < count; i++) {
-        const res = await gateway.generateTrivia({ topic, difficulty });
-        this.questions.push(parseTriviaQuestion(res.data));
-        this.state.totalQuestions = this.questions.length;
+      const results = await Promise.allSettled(
+        Array.from({ length: this.count }, (_, i) =>
+          gateway.generateTrivia({
+            topic: this.state.topic,
+            difficulty: this.difficulty,
+            audience: this.audience,
+            nonce: i + 1,
+          }),
+        ),
+      );
+      for (const result of results) {
+        if (result.status !== 'fulfilled') {
+          console.error('[kahoot] falló la generación de una pregunta', result.reason);
+          continue;
+        }
+        try {
+          this.questions.push(parseTriviaQuestion(result.value.data));
+        } catch (error) {
+          console.error('[kahoot] pregunta inválida descartada', error);
+        }
       }
+      this.state.totalQuestions = this.questions.length;
     } catch (error) {
       console.error('[kahoot] no se pudieron generar preguntas', error);
     } finally {
+      this.state.genFailed = this.questions.length === 0;
       this.state.ready = true;
     }
+  }
+
+  /** El anfitrión puede reintentar la generación si falló (estando en lobby). */
+  private handleRegenerate(client: Client): void {
+    if (client.sessionId !== this.state.hostId) return;
+    if (this.state.phase !== 'lobby') return;
+    if (!this.state.ready) return; // ya está generando
+    void this.generateQuestions();
   }
 
   override async onJoin(client: Client, options: KahootCreateOptions): Promise<void> {

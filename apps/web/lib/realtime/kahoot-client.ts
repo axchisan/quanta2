@@ -19,6 +19,7 @@ export interface KahootPlayer {
 export interface KahootSnapshot {
   phase: 'lobby' | 'question' | 'reveal' | 'finished';
   ready: boolean;
+  genFailed: boolean;
   topic: string;
   questionIndex: number;
   totalQuestions: number;
@@ -39,6 +40,7 @@ interface RawPlayer {
 interface RawState {
   phase: KahootSnapshot['phase'];
   ready: boolean;
+  genFailed: boolean;
   topic: string;
   questionIndex: number;
   totalQuestions: number;
@@ -66,6 +68,7 @@ export function snapshot(rawState: unknown): KahootSnapshot {
   return {
     phase: state.phase,
     ready: state.ready,
+    genFailed: state.genFailed,
     topic: state.topic,
     questionIndex: state.questionIndex,
     totalQuestions: state.totalQuestions,
@@ -82,6 +85,7 @@ export function createKahootRoom(opts: {
   nickname: string;
   topic: string;
   difficulty: string;
+  audience?: string;
   /** JWT de Supabase para atribuir el resultado a la cuenta (si está logueado). */
   accessToken?: string;
 }): Promise<Room> {
@@ -99,4 +103,48 @@ export function joinKahootRoom(
 /** Reconecta a una sala tras una caída usando el token de reconexión de Colyseus. */
 export function reconnectKahootRoom(reconnectionToken: string): Promise<Room> {
   return getClient().reconnect(reconnectionToken);
+}
+
+// ── Reconexión persistente (sobrevive a recargas de página) ──────────────────
+// Colyseus retiene al jugador ~30s tras una caída no consentida. Guardamos el
+// token en localStorage para ofrecer "volver a tu sala" si el usuario recargó.
+const RESUME_KEY = 'quanta:kahoot:resume';
+const RESUME_TTL_MS = 45_000;
+
+export interface ResumeInfo {
+  roomId: string;
+  token: string;
+  nickname: string;
+  savedAt: number;
+}
+
+export function saveResumeInfo(info: Omit<ResumeInfo, 'savedAt'>): void {
+  try {
+    localStorage.setItem(RESUME_KEY, JSON.stringify({ ...info, savedAt: Date.now() }));
+  } catch {
+    /* localStorage no disponible */
+  }
+}
+
+export function loadResumeInfo(): ResumeInfo | null {
+  try {
+    const raw = localStorage.getItem(RESUME_KEY);
+    if (!raw) return null;
+    const info = JSON.parse(raw) as ResumeInfo;
+    if (Date.now() - info.savedAt > RESUME_TTL_MS) {
+      clearResumeInfo();
+      return null;
+    }
+    return info;
+  } catch {
+    return null;
+  }
+}
+
+export function clearResumeInfo(): void {
+  try {
+    localStorage.removeItem(RESUME_KEY);
+  } catch {
+    /* noop */
+  }
 }
