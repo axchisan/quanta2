@@ -206,6 +206,31 @@
   - `lint/typecheck/test/build` verdes (web + game-server).
 - **Notes:** Pendiente Fase 2: persistir resultados de sala (atribuir score Kahoot a la cuenta), Duelo 1v1, chat.
 
+### T017 — Investigación de diseño & assets (benchmark de productos similares)
+
+- **Owner:** ui-web
+- **Status:** pending
+- **Priority:** P1 (fundación de pulido)
+- **Sprint:** 2/3
+- **BlockedBy:** —
+- **Description:** Task de **investigación** (no se rediseña nada acá). Escanear y analizar
+  productos educativos/gamificados líderes (**Kahoot**, **Duolingo** + ≥6 variados:
+  Quizizz, Blooket, Gimkit, Prodigy, Khan Academy, Brilliant, etc.) para subir el nivel
+  de diseño de Quanta exponencialmente. Ejes: design tokens, **★ sistema de avatares /
+  personajes animados** (lo de los muñecos animados tipo Kahoot/Duolingo), ilustración,
+  motion, sonido, UX de gamificación, onboarding, a11y. Metodología con Playwright
+  (render + screenshots + extracción de CSS computado) + WebSearch/WebFetch + galerías
+  (Mobbin/Dribbble/Figma). Entregable: **dossier** en `docs/research/design-benchmark/`
+  (análisis por sitio + `SYNTHESIS.md` + `quanta-design-system-v2.md` +
+  `avatar-system-spec.md` + `asset-production-plan.md` + `references.md`).
+  **⚠️ Derivados originales, NO piratear assets con copyright** (ver brief).
+- **Brief completo:** [`docs/research/design-benchmark/README.md`](../research/design-benchmark/README.md) — **leer antes de empezar.**
+- **Acceptance:** ver sección 8 del brief (≥8 sitios analizados, síntesis, design system v2,
+  spec de avatares con tecnología recomendada, plan de assets, cero assets con copyright comiteados).
+- **Notes:** Primero el dossier; el **pulido** se deriva en tasks T018+ (aplicar design
+  system, sistema de avatares animados, rework de pantallas, sonido/celebración) que
+  consumen esta investigación. No codear pulido dentro de T017.
+
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 
 - **B001** — Configurar Husky + lint-staged en pre-commit.
