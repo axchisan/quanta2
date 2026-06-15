@@ -1,12 +1,15 @@
 import type { AttemptResult } from '@quanta/types';
 import { postJson } from '@/lib/http';
+import { getBrowserClient } from '@/lib/supabase/browser';
 
-export function submitAttemptRequest(input: {
+export async function submitAttemptRequest(input: {
   challengeId: string;
   timeTakenMs: number;
   submittedAnswer: Record<string, unknown>;
 }): Promise<AttemptResult> {
-  return postJson<AttemptResult>('/api/attempts/submit', input);
+  // Adjunta el token de sesión (si hay) para atribuir el intento al usuario.
+  const { data } = await getBrowserClient().auth.getSession();
+  return postJson<AttemptResult>('/api/attempts/submit', input, data.session?.access_token);
 }
 
 export interface TriviaChallengeResponse {

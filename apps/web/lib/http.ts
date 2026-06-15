@@ -1,7 +1,9 @@
-export async function postJson<T>(url: string, body: unknown): Promise<T> {
+export async function postJson<T>(url: string, body: unknown, bearerToken?: string): Promise<T> {
+  const headers: Record<string, string> = { 'content-type': 'application/json' };
+  if (bearerToken) headers.authorization = `Bearer ${bearerToken}`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers,
     body: JSON.stringify(body),
   });
   const data: unknown = await res.json().catch(() => null);
