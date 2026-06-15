@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { EntryCard } from '@/app/components/entry-card';
 import { siteConfig } from '@/app/lib/site';
 
@@ -11,6 +12,12 @@ export default function HomePage() {
         </p>
       </div>
       <EntryCard />
+      <Link
+        href="/jugar/caida-libre"
+        className="text-muted-foreground hover:text-foreground text-sm underline underline-offset-4"
+      >
+        o practicá solo: Caída Libre 🪂
+      </Link>
     </main>
   );
 }

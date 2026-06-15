@@ -1,7 +1,12 @@
 import Phaser from 'phaser';
-import { BootScene } from './scenes/boot/index.js';
+import { BootScene } from './scenes/boot/index';
 
-export { BootScene, BOOT_SCENE_KEY } from './scenes/boot/index.js';
+export { BootScene, BOOT_SCENE_KEY } from './scenes/boot/index';
+export { FreeFallScene, FREE_FALL_SCENE_KEY } from './scenes/free-fall/index';
+export type { FreeFallDropPayload, FreeFallLandedPayload } from './scenes/free-fall/index';
+export { freeFallTime } from './scenes/free-fall/physics';
+export { createFreeFallGame } from './scenes/free-fall/game';
+export type { FreeFallGameOptions } from './scenes/free-fall/game';
 
 export function createGameConfig(parent: string): Phaser.Types.Core.GameConfig {
   return {
