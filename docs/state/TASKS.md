@@ -256,6 +256,86 @@
 - **Notes:** Decisiones de diseño registradas en `DECISIONS.md` (2026-06-15). Pendiente Fase 2:
   Duelo 1v1, chat de sala. T017 (investigación de diseño) sigue pending.
 
+### T019 — Salas: IA confiable (Groq) + personalización + reconexión persistente (Fase 2)
+
+- **Owner:** ai-gateway / backend-realtime / ui-web
+- **Status:** review (2026-06-15) — rama `feat/backend-realtime-T019-salas-ia-personalizacion`
+- **Priority:** P0 (Fase 2 — desbloquea el bug de generación)
+- **Sprint:** 2
+- **BlockedBy:** —
+- **Description:** Mejoras de robustez y personalización de las salas Kahoot:
+  - **Bug crítico resuelto:** la generación con IA se quedaba colgada porque **Gemini
+    devolvía HTTP 503** (saturado) y no había fallback → 0 preguntas. Se añadió el
+    **proveedor Groq** (`createGroqProvider`, API compatible OpenAI, `llama-3.3-70b-versatile`,
+    JSON mode, ~1s) como **primario**, con Gemini de fallback. Tanto el game-server como la web.
+  - **Generación en paralelo** (`Promise.allSettled`) en vez de secuencial → mucho más rápido;
+    tolera la caída de un proveedor (conserva las preguntas que sí salieron). Flag `genFailed`
+    + mensaje `regenerate` (el anfitrión reintenta si falló) con UI de error/retry.
+  - **Personalización:** tema **libre** (input además de presets) + selector de **audiencia**
+    (niños / secundaria / universidad) que ajusta vocabulario y profundidad del prompt.
+  - **Nombre pre-cargado** desde la sesión (editable) y recordado en el navegador (invitados).
+  - **Reconexión persistente:** el token de reconexión se guarda en `localStorage` (TTL 45s);
+    al volver a `/sala` tras recargar, se ofrece "Volver a mi sala".
+- **Acceptance:**
+  - Groq verificado contra su API (HTTP 200, JSON válido, ~1s). Env `GROQ_API_KEY` seteada en
+    Coolify (game-server + web).
+  - `lint/typecheck/test/build` verdes; tests de prompt (audiencia/nonce) añadidos (ai-gateway 12).
+  - **Pendiente prueba humana:** partida real multi-dispositivo con generación Groq + reconexión por recarga.
+- **Notes:** No incluye los códigos de 6 dígitos ni avatares (ver T020/T022). La validación de
+  coherencia de la respuesta IA (correctIndex vs explicación) queda en T024.
+
+---
+
+## Backlog priorizado de mejoras (planteado 2026-06-15, pendiente)
+
+> Pedido del usuario: subir interactividad/personalización y pulir UX de salas. Se desarrolla
+> de a poco para no saturar. Orden sugerido por impacto/dependencia.
+
+### T020 — Códigos de sala estilo Kahoot (6 caracteres + auto-formato)
+
+- **Owner:** backend-realtime / ui-web · **Status:** pending · **Priority:** P1 · **Sprint:** 2/3
+- **Description:** Reemplazar el `roomId` de Colyseus (9 chars) por un **código corto de 6
+  caracteres** estilo Kahoot, y que el input lo **auto-formatee** (`wf5-ab2`). Requiere
+  customizar la generación del room id en Colyseus (recipe `matchMaker.query` para unicidad)
+  y adaptar `joinById` + el campo `room_code` de `game_results`. **Riesgo:** toca matchmaking
+  → testear bien antes de prod. Auto-formato del input es la parte fácil; el id corto es lo
+  delicado.
+
+### T021 — Sesiones de invitado persistentes (browser-based)
+
+- **Owner:** backend-realtime / ui-web · **Status:** pending · **Priority:** P1 · **Sprint:** 3
+- **Description:** Para usuarios **sin login**, generar una identidad de invitado en el navegador
+  (id en `localStorage`) y guardar una **sesión temporal** (puntaje, reconexión) que **no**
+  persista a largo plazo como las autenticadas. Atar resultados de invitado a `game_results`
+  vía `guest_session_id` (hoy la tabla exige `user_id`; habría que relajar el NOT NULL o usar
+  la tabla `guest_sessions` existente). Define política de expiración/limpieza. Parte ya se
+  adelantó en T019 (nombre recordado + reconexión por token); falta la persistencia del puntaje.
+
+### T022 — Sistema de avatares estilo Kahoot (gestión + edición)
+
+- **Owner:** ui-web / game-engine · **Status:** pending · **Priority:** P2 · **Sprint:** 3/4
+- **BlockedBy:** T017 (investigación de diseño & avatares)
+- **Description:** Avatares/personajes animados editables por el jugador (estilo Kahoot/Duolingo):
+  selector + editor (color, rasgos, accesorios), render en lobby/leaderboard, persistencia en
+  el perfil. La **tecnología y el spec** salen del dossier de T017 (`avatar-system-spec.md`).
+  Derivados originales, sin assets con copyright.
+
+### T023 — Personalización avanzada de partidas
+
+- **Owner:** ui-web / backend-realtime · **Status:** pending · **Priority:** P2 · **Sprint:** 3
+- **Description:** Más ejes ajustables: cantidad de preguntas, tiempo por pregunta, materia
+  (física/química/mixto), modo de juego, y ampliar audiencias/dominios. Construye sobre la base
+  de personalización de T019 (tema libre + audiencia).
+
+### T024 — Validación de coherencia de respuestas IA
+
+- **Owner:** ai-gateway · **Status:** pending · **Priority:** P1 · **Sprint:** 2/3
+- **Description:** El LLM a veces devuelve un `correctIndex` que **no coincide** con su propia
+  explicación (visto con Groq y Gemini). Añadir verificación: re-prompt de auto-chequeo o
+  validación cruzada para descartar/corregir preguntas incoherentes antes de mostrarlas.
+
+---
+
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 
 - **B001** — Configurar Husky + lint-staged en pre-commit.

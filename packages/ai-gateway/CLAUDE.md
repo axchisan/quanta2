@@ -4,10 +4,13 @@
 Cache + fallback chain + moderación + métricas viven acá. Leé `docs/07-ai-strategy.md` y
 `docs/agents/ai-gateway.md` antes de tocar.
 
-> Estado actual (T010): **provider Gemini real** (`createGeminiProvider`, `gemini-2.5-flash`,
-> safety máximo, JSON mode) usado por `generate-trivia`. `parseTriviaQuestion` valida el JSON con Zod.
-> Los demás providers (Groq/OpenRouter, Pollinations/HF, ElevenLabs/Coqui) siguen pendientes.
-> Imports relativos **sin extensión** (compat webpack/Next). Env: `GEMINI_API_KEY` (oblig.), `GEMINI_MODEL` (opc.).
+> Estado actual (T010+T019): providers de texto **Groq** (`createGroqProvider`, `llama-3.3-70b-versatile`,
+> JSON mode, ~1s — **primario**) y **Gemini** (`createGeminiProvider`, `gemini-2.5-flash`, safety máximo
+> — fallback). Gemini suele dar **503** en horas pico, por eso Groq va primero. `runTextChain` recorre el
+> array de `textProviders` en orden. `parseTriviaQuestion` valida el JSON con Zod. El prompt de trivia
+> acepta **audiencia** (`niños`/`secundaria`/`universidad`) y `nonce` (variedad en lote). Providers de
+> imagen/TTS (Pollinations/HF, ElevenLabs/Coqui) siguen pendientes. Imports relativos **sin extensión**
+> (compat webpack/Next). Env: `GROQ_API_KEY` y/o `GEMINI_API_KEY` (al menos uno), `*_MODEL` (opc.).
 
 ## Estructura
 

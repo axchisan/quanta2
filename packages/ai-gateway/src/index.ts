@@ -6,6 +6,7 @@ import type { ImageProvider, TextProvider, AudioProvider } from './providers/typ
 import { AllProvidersFailedError } from './providers/types';
 import { buildChallengePrompt } from './prompts/challenge';
 import { buildTriviaPrompt } from './prompts/trivia';
+import type { TriviaAudience } from './prompts/trivia';
 
 export type { AICache } from './cache/types';
 export { MemoryCache } from './cache/memory-cache';
@@ -23,8 +24,11 @@ export {
 } from './providers/types';
 export { buildChallengePrompt } from './prompts/challenge';
 export { buildTriviaPrompt } from './prompts/trivia';
+export type { TriviaAudience, TriviaPromptInput } from './prompts/trivia';
 export { createGeminiProvider } from './providers/gemini';
 export type { GeminiProviderOptions } from './providers/gemini';
+export { createGroqProvider } from './providers/groq';
+export type { GroqProviderOptions } from './providers/groq';
 export {
   parseTriviaQuestion,
   triviaQuestionSchema,
@@ -42,6 +46,10 @@ export interface ChallengeRequest {
 export interface TriviaRequest {
   topic: string;
   difficulty: string;
+  /** Público objetivo (ajusta vocabulario/profundidad). Default: 'secundaria'. */
+  audience?: TriviaAudience;
+  /** Pista de variedad para generación en lote (evita preguntas repetidas). */
+  nonce?: string | number;
   /** Por default NO se cachea (variedad). `true` para respuestas determinísticas. */
   cacheable?: boolean;
 }
@@ -78,8 +86,14 @@ export function createAIGateway(deps: AIGatewayDeps): AIGateway {
 
     async generateTrivia(req: TriviaRequest): Promise<AIResponse<string>> {
       const start = Date.now();
-      const prompt = buildTriviaPrompt({ topic: req.topic, difficulty: req.difficulty });
-      const key = hashKey(['generate-trivia', req.topic, req.difficulty]);
+      const audience = req.audience ?? 'secundaria';
+      const prompt = buildTriviaPrompt({
+        topic: req.topic,
+        difficulty: req.difficulty,
+        audience,
+        ...(req.nonce !== undefined ? { nonce: req.nonce } : {}),
+      });
+      const key = hashKey(['generate-trivia', req.topic, req.difficulty, audience]);
 
       if (req.cacheable) {
         const hit = await cache.get(key);
