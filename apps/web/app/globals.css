@@ -1,5 +1,11 @@
-@import "tailwindcss";
-@import "@quanta/ui/tokens.css";
+@import 'tailwindcss';
+@import '@quanta/ui/tokens.css';
+
+/* Fuentes redondeadas (next/font define las variables en el layout). */
+@theme inline {
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-baloo), var(--font-nunito), ui-sans-serif, sans-serif;
+}
 
 html,
 body {
@@ -7,5 +13,16 @@ body {
 }
 
 body {
-  @apply bg-background text-foreground antialiased;
+  @apply bg-background text-foreground font-sans antialiased;
+  background-image: radial-gradient(
+      hsl(var(--primary) / 0.06) 1px,
+      transparent 1px
+    );
+  background-size: 22px 22px;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-display;
 }

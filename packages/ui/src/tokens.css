@@ -1,112 +1,76 @@
 /**
- * Quanta theme — source of truth.
- * Tailwind v4 CSS-first. Imported by apps/web globals.css AFTER `@import "tailwindcss";`.
+ * Quanta theme — source of truth (Tailwind v4 CSS-first).
+ * Importado por apps/web/globals.css DESPUÉS de `@import "tailwindcss";`.
  *
- * Palette: electric indigo primary + cyan accent (physics/science vibe).
- * Colors use HSL channel triplets so Tailwind utilities can apply opacity,
- * e.g. `bg-primary/90`.
+ * Estilo: "Edu-friendly suave" — pasteles (lavanda/menta/durazno), esquinas muy
+ * redondeadas, sombras suaves difusas. Amigable y cálido para estudiantes.
+ *
+ * Colores como tripletes HSL envueltos en hsl(var(--x)) para soportar el
+ * modificador de opacidad (bg-primary/20).
  */
 
 :root {
-  /* Surfaces */
-  --background: 222 47% 7%;
-  --foreground: 210 40% 96%;
+  --background: 255 100% 99%;
+  --foreground: 256 28% 24%;
 
-  --card: 222 44% 9%;
-  --card-foreground: 210 40% 96%;
+  --card: 0 0% 100%;
+  --card-foreground: 256 28% 24%;
 
-  --popover: 222 44% 9%;
-  --popover-foreground: 210 40% 96%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 256 28% 24%;
 
-  /* Brand — electric indigo */
-  --primary: 245 75% 60%;
-  --primary-foreground: 210 40% 98%;
+  /* Lavanda */
+  --primary: 252 84% 71%;
+  --primary-foreground: 0 0% 100%;
 
-  /* Secondary — deep slate */
-  --secondary: 222 30% 18%;
-  --secondary-foreground: 210 40% 96%;
+  /* Durazno */
+  --secondary: 25 100% 84%;
+  --secondary-foreground: 22 60% 30%;
 
-  /* Muted */
-  --muted: 222 25% 16%;
-  --muted-foreground: 215 20% 65%;
+  /* Menta */
+  --accent: 162 60% 60%;
+  --accent-foreground: 165 55% 18%;
 
-  /* Accent — cyan */
-  --accent: 190 90% 50%;
-  --accent-foreground: 222 47% 8%;
+  --muted: 252 50% 96%;
+  --muted-foreground: 256 14% 50%;
 
-  /* Destructive */
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 210 40% 98%;
+  /* Coral suave */
+  --destructive: 357 95% 73%;
+  --destructive-foreground: 0 0% 100%;
 
-  /* Borders / inputs / focus ring */
-  --border: 222 25% 20%;
-  --input: 222 25% 20%;
-  --ring: 245 75% 65%;
+  --border: 252 45% 92%;
+  --input: 252 45% 90%;
+  --ring: 252 84% 71%;
 
-  --radius: 0.625rem;
-}
-
-.dark {
-  --background: 224 56% 5%;
-  --foreground: 210 40% 96%;
-
-  --card: 224 50% 7%;
-  --card-foreground: 210 40% 96%;
-
-  --popover: 224 50% 7%;
-  --popover-foreground: 210 40% 96%;
-
-  --primary: 245 80% 65%;
-  --primary-foreground: 224 56% 6%;
-
-  --secondary: 222 32% 16%;
-  --secondary-foreground: 210 40% 96%;
-
-  --muted: 222 28% 14%;
-  --muted-foreground: 215 20% 68%;
-
-  --accent: 190 95% 55%;
-  --accent-foreground: 224 56% 6%;
-
-  --destructive: 0 72% 55%;
-  --destructive-foreground: 210 40% 98%;
-
-  --border: 222 26% 18%;
-  --input: 222 26% 18%;
-  --ring: 245 80% 70%;
+  --radius: 1.25rem;
 }
 
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
-
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
-
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
-
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-md: calc(var(--radius) - 0.4rem);
+  --radius-sm: calc(var(--radius) - 0.7rem);
+
+  /* Sombras suaves difusas (tinte lavanda) */
+  --shadow-soft: 0 10px 30px -12px hsl(252 60% 55% / 0.28);
+  --shadow-card: 0 4px 16px -6px hsl(252 50% 55% / 0.18);
 }
