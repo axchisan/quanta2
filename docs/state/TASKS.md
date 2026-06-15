@@ -136,6 +136,18 @@
   - `lint/typecheck/test (ai-gateway 8) /build` verdes.
 - **Notes:** Requiere `GEMINI_API_KEY` en el entorno (Coolify web env para prod).
 
+### T011 — Reto Balanceo de Ecuaciones (Fase 1)
+
+- **Owner:** ui-web / backend-realtime
+- **Status:** done (2026-06-14)
+- **Priority:** P0
+- **Sprint:** 1
+- **Description:** Reto de Química (`equation_balance`): el jugador ajusta coeficientes por especie con feedback de átomos en vivo (verde/rojo por elemento). Validación **server-side** genérica (`validateEquationBalance`): balancea todos los elementos Y forma reducida (gcd=1). `/jugar/[slug]` despacha por `payload.type` (free_fall vs equation_balance). Retos sembrados (migración `0003`: síntesis del agua, combustión del metano).
+- **Acceptance:**
+  - Seed aplicado a prod; `GET` del reto **sin `solution`** (anti-cheat).
+  - Verificado contra prod: `[1,2,1,2]` → correcto `score 370`; `[1,1,1,1]` → incorrecto; `[2,4,2,4]` (no reducido) → incorrecto; intentos persistidos.
+  - Tests del validador + `lint/typecheck/test/build` verdes.
+
 ---
 
 ## Backlog (sin sprint asignado)
