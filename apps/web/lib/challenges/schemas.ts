@@ -18,6 +18,10 @@ export const multipleChoiceAnswerSchema = z.object({
   selectedIndex: z.number().int().min(0).max(9),
 });
 
+export const equationBalanceAnswerSchema = z.object({
+  coefficients: z.array(z.number().int().min(0).max(20)).min(2).max(10),
+});
+
 // `submittedAnswer` se valida por tipo de reto en el servicio (free_fall vs multiple_choice).
 export const submitAttemptSchema = z.object({
   challengeId: z.string().uuid(),
