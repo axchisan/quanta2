@@ -4,10 +4,12 @@ import type { Client } from 'colyseus';
 import { parseTriviaQuestion } from '@quanta/ai-gateway';
 import type { TriviaQuestion } from '@quanta/ai-gateway';
 import { getAIGateway } from '../ai/gateway.js';
+import { persistGameResults, verifyAccessToken, type GameResultRow } from '../db/supabase.js';
 
 const QUESTION_MS = 20_000;
 const REVEAL_MS = 4_500;
 const BASE_POINTS = 100;
+const MODE = 'kahoot';
 
 export class PlayerState extends Schema {
   @type('string') nickname = '';
@@ -39,6 +41,8 @@ interface KahootCreateOptions {
   topic?: string;
   difficulty?: string;
   count?: number;
+  /** JWT de Supabase del jugador logueado (opcional: invitados no lo envían). */
+  accessToken?: string;
 }
 
 /** Sala Kahoot authoritative: el server tiene las respuestas, valida y puntúa. */
@@ -47,6 +51,11 @@ export class KahootRoom extends Room<KahootState> {
 
   private questions: TriviaQuestion[] = [];
   private questionStartedAt = 0;
+  /** sessionId → user id de Supabase (solo jugadores logueados). Privado: no se sincroniza. */
+  private readonly userIds = new Map<string, string>();
+  /** sessionId → cantidad de respuestas correctas en la partida. */
+  private readonly correctCounts = new Map<string, number>();
+  private persisted = false;
 
   override onCreate(options: KahootCreateOptions): void {
     const state = new KahootState();
@@ -79,11 +88,15 @@ export class KahootRoom extends Room<KahootState> {
     }
   }
 
-  override onJoin(client: Client, options: KahootCreateOptions): void {
+  override async onJoin(client: Client, options: KahootCreateOptions): Promise<void> {
     const player = new PlayerState();
     player.nickname = (options.nickname ?? 'Jugador').slice(0, 20) || 'Jugador';
     this.state.players.set(client.sessionId, player);
+    this.correctCounts.set(client.sessionId, 0);
     if (!this.state.hostId) this.state.hostId = client.sessionId;
+    // Atribución a la cuenta: verificamos el JWT server-side (no confiamos en el cliente).
+    const userId = await verifyAccessToken(options.accessToken);
+    if (userId) this.userIds.set(client.sessionId, userId);
   }
 
   override async onLeave(client: Client, consented: boolean): Promise<void> {
@@ -107,6 +120,8 @@ export class KahootRoom extends Room<KahootState> {
 
   private removePlayer(sessionId: string): void {
     this.state.players.delete(sessionId);
+    this.userIds.delete(sessionId);
+    this.correctCounts.delete(sessionId);
     if (sessionId === this.state.hostId) this.migrateHost();
     this.maybeAdvanceAfterLeave();
   }
@@ -175,6 +190,7 @@ export class KahootRoom extends Room<KahootState> {
       const gain = BASE_POINTS + timeBonus;
       player.score += gain;
       player.lastGain = gain;
+      this.correctCounts.set(client.sessionId, (this.correctCounts.get(client.sessionId) ?? 0) + 1);
     }
 
     let pending = false;
@@ -202,5 +218,38 @@ export class KahootRoom extends Room<KahootState> {
   private finish(): void {
     this.state.phase = 'finished';
     this.clock.clear();
+    // En background: la persistencia nunca debe bloquear el game loop.
+    void this.persistResults();
+  }
+
+  /** Atribuye el resultado de la partida a los jugadores logueados (idempotente). */
+  private async persistResults(): Promise<void> {
+    if (this.persisted) return;
+    this.persisted = true;
+
+    // Ranking final por score desc (empates: orden de inserción del Map).
+    const ranked = [...this.state.players.entries()].sort(([, a], [, b]) => b.score - a.score);
+    const totalPlayers = ranked.length;
+    const totalQuestions = this.questions.length;
+
+    const rows: GameResultRow[] = [];
+    ranked.forEach(([sessionId, player], idx) => {
+      const userId = this.userIds.get(sessionId);
+      if (!userId) return; // solo jugadores logueados
+      rows.push({
+        user_id: userId,
+        room_code: this.roomId,
+        mode: MODE,
+        topic: this.state.topic,
+        nickname: player.nickname,
+        score: player.score,
+        rank: idx + 1,
+        total_players: totalPlayers,
+        correct_count: this.correctCounts.get(sessionId) ?? 0,
+        total_questions: totalQuestions,
+      });
+    });
+
+    await persistGameResults(rows);
   }
 }

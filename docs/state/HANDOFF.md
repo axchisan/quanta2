@@ -59,7 +59,7 @@ Todos viven en **env vars de Coolify** y en `apps/web/.env.local` (gitignored). 
 
 Opciones pendientes, sin orden fijo:
 - **T017 — Investigación de diseño & assets** (pulido exponencial) → benchmark profundo de Kahoot/Duolingo y similares para construir un design system v2 + sistema de avatares animados. Es una task de **investigación** (genera un dossier; el pulido se deriva en T018+). Brief: `docs/research/design-benchmark/README.md`. Status `pending` en `TASKS.md`.
-- **Persistir resultados de sala** → atar el puntaje Kahoot a la cuenta Google para que cuente en "Mis puntajes". *Diseño abierto:* requiere autenticar al jugador dentro de la sala Colyseus (pasar el JWT al `join`, verificarlo server-side) y resolver el `challenge_id` (las preguntas Kahoot hoy son in-memory, no se persisten como `challenges`). Probablemente convenga una tabla `game_results` o persistir las preguntas generadas como `challenges`. **Hablalo con el usuario antes de codear.**
+- ~~**Persistir resultados de sala**~~ ✅ **Hecho (T018, en `review`)**. Tabla nueva `game_results` (migración `0004`, aplicada a prod); el cliente pasa el `access_token` en `create`/`join`, el server lo verifica y persiste el resultado agregado por jugador logueado al `finish` (upsert idempotente, en background). `/mis-puntajes` muestra "Partidas con amigos" + "Retos en solitario". Ver `DECISIONS.md` 2026-06-15. *Pendiente: prueba humana con login Google real.*
 - **Duelo 1v1** → nuevo modo (matchmaking 1v1, flujo alternado).
 - **Chat de sala** → social, más chico.
 - **Pendiente de verificación humana:** prueba multi-dispositivo real del flujo Kahoot en `quanta.axchisan.com` → "Jugar con amigos" (lo hace el usuario).

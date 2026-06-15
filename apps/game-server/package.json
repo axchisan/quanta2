@@ -16,7 +16,9 @@
     "@colyseus/schema": "^3.0.76",
     "@colyseus/ws-transport": "^0.16.0",
     "@quanta/ai-gateway": "workspace:*",
+    "@quanta/db": "workspace:*",
     "@quanta/types": "workspace:*",
+    "@supabase/supabase-js": "^2.47.10",
     "colyseus": "^0.16.0"
   },
   "devDependencies": {
