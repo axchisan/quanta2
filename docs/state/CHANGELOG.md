@@ -29,13 +29,33 @@
   - `templates/{task,adr,challenge,pr}.md`
 - 🏗️ CLAUDE.md raíz con guía rápida.
 
+#### Added (cierre)
+
+- 🏗️ Scaffolding completo del monorepo (T001–T007): `apps/{web,game-server}`, `packages/{ui,types,game-engine,ai-gateway,db,config}`, CI (lint·typecheck·test·build), esquema Supabase (8 tablas + RLS) y tipos generados.
+
+---
+
+### Sprint 1 — Infra + MVP Fase 1 (2026-06-14 → 2026-06-15)
+
+#### Added
+
+- ☁️ **Infra desplegada en Coolify** (VPS Contabo): web (`quanta.axchisan.com`), game-server (`api.quanta.axchisan.com`), Supabase self-hosted (`db.quanta.axchisan.com`). Dockerfiles verificados; runbook en `infra/coolify.md`.
+- 🚪 **T008 — Entrada invitado + Lobby**: crear/unirse a sala (nickname + código) + presencia en vivo (Supabase Realtime).
+- 🪂 **T009 — Reto Caída Libre** (Física): escena Phaser + scoring server-side (`t=√(2h/g)`, tol 10%).
+- 🧠 **T010 — Reto Trivia IA** (F+Q): provider Gemini real (`gemini-2.5-flash`) + generación/validación con anti-cheat.
+- ⚗️ **T011 — Reto Balanceo de Ecuaciones** (Química): validación química server-side (balance + forma reducida).
+- 🔐 **T012 — Cuenta Google (OAuth) + puntaje persistente**: atribución de intentos por JWT + página "Mis puntajes".
+- 🎨 **T013 — Rediseño "Edu-friendly suave"**: theme pastel, componentes (Card/Badge), fuentes redondeadas, mascota átomo, hub `/jugar`.
+- 🔊 **T014 — Cierre Fase 1**: audio SFX (Web Audio) + pulido fino por página + responsive mobile.
+
 #### Changed
 
-- (En progreso) Scaffolding del monorepo.
+- AI Gateway: provider Gemini real reemplaza los stubs (T010).
+- `@quanta/game-engine` + `@quanta/ai-gateway`: imports relativos sin extensión (compat webpack/Next).
 
 #### Fixed
 
-- (Nada todavía.)
+- Limpieza de datos de prueba en prod (conservando la cuenta del usuario).
 
 ---
 
