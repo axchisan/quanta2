@@ -33,7 +33,7 @@ export function EntryCard() {
   }
 
   return (
-    <div className="border-border bg-card w-full max-w-sm rounded-xl border p-6 shadow-lg">
+    <div className="w-full text-left">
       <label htmlFor="nickname" className="text-muted-foreground mb-2 block text-sm font-medium">
         Tu nombre
       </label>

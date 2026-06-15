@@ -2,5 +2,8 @@ export { Button, buttonVariants } from './components/button';
 export type { ButtonProps } from './components/button';
 export { Input } from './components/input';
 export type { InputProps } from './components/input';
+export { Card } from './components/card';
+export { Badge, badgeVariants } from './components/badge';
+export type { BadgeProps } from './components/badge';
 export { cn } from './lib/utils';
 export type { ClassValue } from './lib/utils';
