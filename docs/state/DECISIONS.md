@@ -40,6 +40,15 @@
 - **2026-06-15 — backend (T015):** Sala Kahoot sobre **Colyseus** (ADR-0004), no Supabase Realtime — estado authoritative para anti-cheat. El server genera las preguntas con Gemini (el game-server tiene `@quanta/ai-gateway` + `GEMINI_API_KEY`), **en background** porque `onCreate` async bloquearía la respuesta de matchmaking (timeout → socket hang up); un flag `ready` avisa cuando están. La sala usa el **`roomId` de Colyseus como código compartible** (no se reusan las salas Supabase de T008, que quedan legacy). `correctIndex` se mantiene en -1 en el state sincronizado durante la pregunta y solo se setea en el reveal (anti-cheat). El lobby de T008 (`/room`) queda como legacy; la landing apunta a `/sala` (Kahoot real).
 - **2026-06-15 — infra/web (T012):** Auth con **Google OAuth** (no Magic Link: el Supabase no tiene SMTP; no email+password: ADR-0005). Habilitado en el Supabase self-hosted agregando `GOTRUE_EXTERNAL_GOOGLE_*` como env vars del servicio (el `auth` usa `env_file: .env`, así que se inyectan al contenedor) + `ADDITIONAL_REDIRECT_URLS` → `GOTRUE_URI_ALLOW_LIST` para permitir el redirect a la app. Atribución de intentos: el cliente manda el JWT en `Authorization`, la ruta lo verifica con `auth.getUser(token)` (service role) y guarda `user_id`. "Mis puntajes" lee directo con el cliente browser + RLS `auth.uid()` (no API route). Sesión client-side en localStorage (`@supabase/supabase-js`, sin `@supabase/ssr` para MVP).
 
+- **2026-06-15 — ai-gateway (T024):** Coherencia de respuestas de trivia **sin costo extra de IA**.
+  El LLM a veces apunta `correctIndex` a una opción que no concuerda con su explicación. En vez de
+  un segundo prompt de verificación (latencia + costo), el prompt ahora pide `answer` = el texto
+  exacto de la opción correcta, y `parseTriviaQuestion` **reconcilia**: si `answer` coincide (normalizado)
+  con una opción distinta de la que apunta `correctIndex`, corrige el índice. El texto suele reflejar el
+  razonamiento real del modelo mejor que el índice. `answer` es opcional (si falta, se confía en el índice)
+  y no se incluye en `TriviaQuestion` (`Omit`). Limitación: garantiza coherencia interna índice↔texto↔
+  explicación, no que la respuesta sea físicamente correcta (eso requeriría un solver o un segundo modelo).
+
 - **2026-06-15 — ai-gateway/backend/web (T019):** **Groq como proveedor de texto primario**
   para la generación de trivia (game-server y web), con Gemini de fallback. Motivo: Gemini
   (`gemini-2.5-flash` free-tier) devolvía **HTTP 503** en horas pico y, al ser el único proveedor,
