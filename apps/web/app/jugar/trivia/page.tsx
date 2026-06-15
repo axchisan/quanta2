@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@quanta/ui';
 import type { AttemptResult } from '@quanta/types';
+import { ResultPanel } from '@/components/result-panel';
 import {
   generateTriviaRequest,
   submitAttemptRequest,
@@ -135,15 +136,13 @@ export default function TriviaPage() {
       ) : null}
 
       {result ? (
-        <div
-          className={`rounded-xl border p-5 ${result.isCorrect ? 'border-primary/40 bg-primary/10' : 'border-destructive/40 bg-destructive/10'}`}
-        >
-          <p className="text-lg font-bold">
-            {result.isCorrect ? '¡Correcto! 🎉' : 'Incorrecto'}{' '}
-            <span className="text-primary">+{result.score} pts</span>
-          </p>
-          <p className="text-muted-foreground mt-2 text-sm">{result.explanation}</p>
-        </div>
+        <ResultPanel
+          isCorrect={result.isCorrect}
+          score={result.score}
+          explanation={result.explanation}
+          onRetry={() => void generate()}
+          retryLabel="Otra pregunta"
+        />
       ) : null}
     </main>
   );

@@ -12,16 +12,16 @@
 
 ### Entregables
 
-- [ ] Monorepo pnpm + Turborepo configurado, los 8 paquetes/apps creados con stub mínimo
-- [ ] TS estricto, ESLint, Prettier, Husky pre-commit funcionando
-- [ ] Supabase self-hosted desplegado en Coolify (`db.quanta.axchisan.com`)
-- [ ] Esquema base + migraciones (`packages/db`): users, guest_sessions, rooms, challenges, attempts, rankings
-- [ ] Auth básica funcional: invitado (nickname + código de sala) end-to-end
-- [ ] Next.js apps/web desplegada en Coolify (`quanta.axchisan.com`) con landing + login invitado
-- [ ] Colyseus apps/game-server desplegado (`api.quanta.axchisan.com`) con room placeholder
-- [ ] AI Gateway con un proveedor LLM (Gemini) funcional + cache trivial en memoria
-- [ ] CI: lint + typecheck + tests unitarios bloquean PRs
-- [ ] `/docs` completa (este sprint la genera el coordinador-humano de arranque)
+- [x] Monorepo pnpm + Turborepo configurado, los 8 paquetes/apps creados con stub mínimo
+- [~] TS estricto, ESLint, Prettier funcionando — **Husky pre-commit pendiente** (B001)
+- [x] Supabase self-hosted desplegado en Coolify (`db.quanta.axchisan.com`)
+- [x] Esquema base + migraciones (`packages/db`): users, guest_sessions, rooms, challenges, attempts, rankings
+- [x] Auth básica funcional: invitado (nickname + código de sala) end-to-end
+- [x] Next.js apps/web desplegada en Coolify (`quanta.axchisan.com`) con landing + login invitado
+- [x] Colyseus apps/game-server desplegado (`api.quanta.axchisan.com`) con room placeholder
+- [x] AI Gateway con un proveedor LLM (Gemini) funcional + cache trivial en memoria
+- [x] CI: lint + typecheck + tests unitarios bloquean PRs
+- [x] `/docs` completa (este sprint la genera el coordinador-humano de arranque)
 
 ### Criterio de cierre
 
@@ -35,14 +35,16 @@
 
 ### Entregables
 
-- [ ] Reto **Caída Libre** (Física): simulación con Phaser+Matter.js. Estudiante ajusta altura/gravedad, predice tiempo de caída, juego valida.
-- [ ] Reto **Balanceo de Ecuaciones** (Química): drag & drop de coeficientes en una ecuación. Validación visual.
-- [ ] Reto **Trivia Mixta** (F+Q): pregunta de opción múltiple generada por IA según tema, con feedback explicativo del LLM al fallar.
-- [ ] Sistema de puntaje (server-side): tiempo + dificultad + racha.
-- [ ] Persistencia: cada `attempt` se guarda en Supabase con resultado.
-- [ ] Pantalla de resultados con feedback IA y opción de reintentar.
-- [ ] Audio: efectos de éxito/error (Howler) + narración TTS opcional del enunciado (cacheada).
-- [ ] Sprites bajo demanda funcionando para los retos que lo necesiten.
+- [x] Reto **Caída Libre** (Física): simulación con Phaser. Estudiante ajusta altura/gravedad, predice tiempo de caída, juego valida server-side.
+- [x] Reto **Balanceo de Ecuaciones** (Química): coeficientes por especie con feedback de átomos en vivo. Validación química server-side.
+- [x] Reto **Trivia Mixta** (F+Q): pregunta de opción múltiple generada por IA (Gemini) con feedback explicativo.
+- [x] Sistema de puntaje (server-side): tiempo + dificultad (+ racha pendiente).
+- [x] Persistencia: cada `attempt` se guarda en Supabase con resultado.
+- [x] Pantalla de resultados con feedback IA y opción de reintentar.
+- [x] Audio: efectos de éxito/error (Web Audio, T014) — narración TTS pendiente (falta provider).
+- [ ] Sprites bajo demanda (IA) — pendiente (uso emojis/formas por ahora).
+- [x] _(extra)_ Cuenta Google (OAuth) + puntaje persistente por usuario.
+- [~] _(extra)_ Pulido visual "Edu-friendly" — fundación hecha (T013) + cierre (T014).
 
 ### Criterio de cierre
 

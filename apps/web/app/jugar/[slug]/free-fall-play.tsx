@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button, Input } from '@quanta/ui';
 import type { AttemptResult, Challenge } from '@quanta/types';
 import { GameCanvas, type GameCanvasHandle } from '@/components/game/game-canvas';
+import { ResultPanel } from '@/components/result-panel';
 import { submitAttemptRequest } from '@/lib/challenges/client';
 
 const PRESETS = [
@@ -138,22 +139,18 @@ export function FreeFallPlay({ challenge }: { challenge: Challenge }) {
       </div>
 
       {result ? (
-        <div
-          className={`rounded-xl border p-5 ${result.isCorrect ? 'border-primary/40 bg-primary/10' : 'border-destructive/40 bg-destructive/10'}`}
-        >
-          <p className="text-lg font-bold">
-            {result.isCorrect ? '¡Correcto! 🎉' : 'Casi…'}{' '}
-            <span className="text-primary">+{result.score} pts</span>
-          </p>
-          <p className="mt-2 text-sm">
-            Tu predicción: <strong>{result.submittedValue.toFixed(2)} s</strong> · Real:{' '}
-            <strong>{result.correctValue.toFixed(2)} s</strong>
-          </p>
-          <p className="text-muted-foreground mt-2 text-sm">{result.explanation}</p>
-          <Button className="mt-4" variant="secondary" onClick={retry}>
-            Reintentar
-          </Button>
-        </div>
+        <ResultPanel
+          isCorrect={result.isCorrect}
+          score={result.score}
+          explanation={result.explanation}
+          onRetry={retry}
+          extra={
+            <>
+              Tu predicción: <strong>{result.submittedValue.toFixed(2)} s</strong> · Real:{' '}
+              <strong>{result.correctValue.toFixed(2)} s</strong>
+            </>
+          }
+        />
       ) : null}
     </main>
   );
