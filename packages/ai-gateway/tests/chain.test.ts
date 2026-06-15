@@ -27,21 +27,45 @@ describe('runTextChain fallback', () => {
 });
 
 describe('createAIGateway cache', () => {
-  it('serves the second identical trivia request from cache without re-calling the provider', async () => {
-    const provider = new MockTextProvider({ id: 'gemini', succeedWith: 'trivia-payload' });
-    const gateway = createAIGateway({
+  function gatewayWith(provider: MockTextProvider) {
+    return createAIGateway({
       cache: new MemoryCache(),
       textProviders: [provider],
       imageProviders: [],
       audioProviders: [],
     });
+  }
 
-    const first = await gateway.generateTrivia({ topic: 'energy', difficulty: 'easy' });
-    const second = await gateway.generateTrivia({ topic: 'energy', difficulty: 'easy' });
+  it('serves the second identical cacheable trivia request from cache', async () => {
+    const provider = new MockTextProvider({ id: 'gemini', succeedWith: 'trivia-payload' });
+    const gateway = gatewayWith(provider);
+
+    const first = await gateway.generateTrivia({
+      topic: 'energy',
+      difficulty: 'easy',
+      cacheable: true,
+    });
+    const second = await gateway.generateTrivia({
+      topic: 'energy',
+      difficulty: 'easy',
+      cacheable: true,
+    });
 
     expect(first.cached).toBe(false);
     expect(second.cached).toBe(true);
     expect(second.data).toBe('trivia-payload');
     expect(provider.callCount).toBe(1);
+  });
+
+  it('does NOT cache trivia by default (creative variety → provider re-called)', async () => {
+    const provider = new MockTextProvider({ id: 'gemini', succeedWith: 'trivia-payload' });
+    const gateway = gatewayWith(provider);
+
+    const first = await gateway.generateTrivia({ topic: 'energy', difficulty: 'easy' });
+    const second = await gateway.generateTrivia({ topic: 'energy', difficulty: 'easy' });
+
+    expect(first.cached).toBe(false);
+    expect(second.cached).toBe(false);
+    expect(provider.callCount).toBe(2);
   });
 });

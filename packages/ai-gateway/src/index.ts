@@ -1,28 +1,36 @@
 import type { AIAudioRequest, AIImageRequest, AIResponse, ProviderId } from '@quanta/types';
-import { hashKey } from './cache/hash.js';
-import type { AICache } from './cache/types.js';
-import { runTextChain } from './chain.js';
-import type { ImageProvider, TextProvider, AudioProvider } from './providers/types.js';
-import { AllProvidersFailedError } from './providers/types.js';
-import { buildChallengePrompt } from './prompts/challenge.js';
-import { buildTriviaPrompt } from './prompts/trivia.js';
+import { hashKey } from './cache/hash';
+import type { AICache } from './cache/types';
+import { runTextChain } from './chain';
+import type { ImageProvider, TextProvider, AudioProvider } from './providers/types';
+import { AllProvidersFailedError } from './providers/types';
+import { buildChallengePrompt } from './prompts/challenge';
+import { buildTriviaPrompt } from './prompts/trivia';
 
-export type { AICache } from './cache/types.js';
-export { MemoryCache } from './cache/memory-cache.js';
-export { hashKey } from './cache/hash.js';
-export { runTextChain } from './chain.js';
-export { loadGatewayConfig } from './config.js';
-export type { GatewayConfig, GatewayTimeouts } from './config.js';
-export type { TextProvider, ImageProvider, AudioProvider } from './providers/types.js';
+export type { AICache } from './cache/types';
+export { MemoryCache } from './cache/memory-cache';
+export { hashKey } from './cache/hash';
+export { runTextChain } from './chain';
+export { loadGatewayConfig } from './config';
+export type { GatewayConfig, GatewayTimeouts } from './config';
+export type { TextProvider, ImageProvider, AudioProvider } from './providers/types';
 export {
   ProviderError,
   ProviderTimeoutError,
   ProviderRateLimitError,
   ModerationBlockedError,
   AllProvidersFailedError,
-} from './providers/types.js';
-export { buildChallengePrompt } from './prompts/challenge.js';
-export { buildTriviaPrompt } from './prompts/trivia.js';
+} from './providers/types';
+export { buildChallengePrompt } from './prompts/challenge';
+export { buildTriviaPrompt } from './prompts/trivia';
+export { createGeminiProvider } from './providers/gemini';
+export type { GeminiProviderOptions } from './providers/gemini';
+export {
+  parseTriviaQuestion,
+  triviaQuestionSchema,
+  TriviaOutOfScopeError,
+} from './validation/trivia';
+export type { TriviaQuestion } from './validation/trivia';
 
 export interface ChallengeRequest {
   topic: string;
@@ -34,6 +42,8 @@ export interface ChallengeRequest {
 export interface TriviaRequest {
   topic: string;
   difficulty: string;
+  /** Por default NO se cachea (variedad). `true` para respuestas determinísticas. */
+  cacheable?: boolean;
 }
 
 export interface AIGateway {
@@ -71,18 +81,20 @@ export function createAIGateway(deps: AIGatewayDeps): AIGateway {
       const prompt = buildTriviaPrompt({ topic: req.topic, difficulty: req.difficulty });
       const key = hashKey(['generate-trivia', req.topic, req.difficulty]);
 
-      const hit = await cache.get(key);
-      if (hit !== null) {
-        return {
-          data: hit,
-          provider: textProviders[0]?.id ?? 'gemini',
-          cached: true,
-          latencyMs: Date.now() - start,
-        };
+      if (req.cacheable) {
+        const hit = await cache.get(key);
+        if (hit !== null) {
+          return {
+            data: hit,
+            provider: textProviders[0]?.id ?? 'gemini',
+            cached: true,
+            latencyMs: Date.now() - start,
+          };
+        }
       }
 
       const { text, provider } = await runTextChain(textProviders, prompt);
-      await cache.set(key, text);
+      if (req.cacheable) await cache.set(key, text);
       return { data: text, provider, cached: false, latencyMs: Date.now() - start };
     },
 

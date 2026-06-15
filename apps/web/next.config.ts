@@ -7,7 +7,14 @@ const config: NextConfig = {
   // de los workspace packages (@quanta/*) al bundle standalone.
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, '../../'),
-  transpilePackages: ['@quanta/ui', '@quanta/types', '@quanta/db', '@quanta/game-engine'],
+  transpilePackages: [
+    '@quanta/ui',
+    '@quanta/types',
+    '@quanta/db',
+    '@quanta/game-engine',
+    '@quanta/ai-gateway',
+    '@quanta/config',
+  ],
   // Phaser 3 expone su build ESM (`module`) sin `export default`, lo que rompe
   // `import Phaser from 'phaser'` bajo webpack. Aliasamos al build UMD que sí
   // interopera el default. (`$` = match exacto del specifier `phaser`.)
