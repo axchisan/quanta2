@@ -2,57 +2,59 @@
 
 > **Cómo se usa este archivo:**
 >
-> - Editado solo por el **Coordinador** al inicio (lunes) y cierre (viernes) del sprint.
+> - Editado solo por el **Coordinador** al inicio y cierre del sprint.
 > - Si necesitás registrar progreso intra-sprint, usá la sección "Updates" abajo.
 > - Estados de tasks en `state/TASKS.md`. Bloqueos en `state/BLOCKERS.md`.
 
 ---
 
-## Sprint 0 — Foundations & Documentación maestra
+## Sprint 1 — Infra + MVP Fase 1
 
-**Fechas:** 2026-04-18 → 2026-04-25 (1 semana)
-**Fase:** 0 — Foundations
-**Objetivo del sprint:** dejar lista la documentación completa del proyecto y arrancar con scaffolding del monorepo. Al cierre del sprint, cualquier agente puede leer los docs y entender qué tiene que hacer.
+**Fechas:** 2026-06-14 → 2026-06-15
+**Fase:** 1 — MVP jugable solo (+ deploy de infra)
+**Objetivo del sprint:** desplegar la base funcional y dejar el **MVP jugable solo** completo y presentable: 3 retos con scoring server-side, cuenta opcional con puntaje persistente, y un look cuidado.
 
 ### Definition of Done del sprint
 
-- [x] `/docs` completa (sección 4 del plan de trabajo): vision, architecture, roadmap, conventions, tech-decisions, multi-agent-workflow, data-model, ai-strategy, game-design, briefings agentes, state skeletons, runbooks, templates.
-- [x] Repo git inicializado, `.gitignore`, README raíz mínimo, primer commit.
-- [x] Monorepo scaffolding: pnpm workspaces, Turborepo, paquetes con `package.json` + `tsconfig.json` + `CLAUDE.md`.
-- [x] CI básica funcionando (lint + typecheck + tests). Ver `.github/workflows/ci.yml`.
-- [x] `pnpm install` y `pnpm dev` arrancan sin errores (web :3000, game-server :2567).
+- [x] Infra desplegada en Coolify (web + game-server + Supabase self-hosted), 3 dominios con TLS.
+- [x] Entrada de invitado + lobby (T008).
+- [x] Los 3 retos del MVP jugables con scoring/anti-cheat server-side: Caída Libre (T009), Trivia IA (T010), Balanceo (T011).
+- [x] Cuenta Google + puntaje persistente (T012).
+- [x] Rediseño visual "Edu-friendly suave" (T013).
+- [x] **Cierre de Fase 1**: audio SFX (Web Audio) + panel de resultado con mascota + pulido por página (T014). TTS narración y sprites IA diferidos (faltan providers).
 
-### Tasks asignadas
+### Tasks (resumen)
 
-Ver `state/TASKS.md` para detalles. Resumen:
+| Task                                           | Owner       | Status |
+| ---------------------------------------------- | ----------- | ------ |
+| T008 — Entrada invitado + Lobby                | ui-web      | done   |
+| T009 — Reto Caída Libre                        | game-engine | done   |
+| T010 — Reto Trivia IA + Gemini                 | ai-gateway  | done   |
+| T011 — Reto Balanceo de Ecuaciones             | ui-web      | done   |
+| T012 — Cuenta Google + puntajes                | ui-web      | done   |
+| T013 — Rediseño Edu-friendly                   | ui-web      | done   |
+| T014 — Cierre Fase 1 (audio + pulido + mobile) | ui-web      | done   |
 
-| Task                                                              | Owner            | Status |
-| ----------------------------------------------------------------- | ---------------- | ------ |
-| T001 — Scaffolding monorepo (pnpm + Turborepo)                    | coordinator      | done   |
-| T002 — CI inicial (GitHub Actions: lint, typecheck)               | coordinator      | done   |
-| T003 — Skeleton apps/web (Next.js 15)                             | ui-web           | done   |
-| T004 — Skeleton apps/game-server (Colyseus)                       | backend-realtime | done   |
-| T005 — Skeleton packages/game-engine (Phaser)                     | game-engine      | done   |
-| T006 — Skeleton packages/ai-gateway                               | ai-gateway       | done   |
-| T007 — Skeleton packages/db (Supabase config + migración inicial) | backend-realtime | done   |
+### Avance vs roadmap
+
+- **Fase 0** ~95% (falta Husky pre-commit). **Fase 1** ~95% — **cerrada** (TTS/sprites IA diferidos).
+- **Fase 2** (multiplayer Kahoot) ~10% (lobby shell). **Fase 3** (creador IA) ~5%. **Fase 4** ~5% (solo pulido visual).
+- Próximo gran hito tras Fase 1: elegir entre **Fase 2 (Kahoot real)** y **Fase 3 (creador de retos)**.
+
+### Deuda técnica abierta
+
+- Bloat de `challenges` por trivia (1 fila/generación); identidad de invitado para solo-play; AI gateway solo Gemini (sin fallback/rate-limit/cache Supabase); sin E2E (Playwright); Husky pre-commit.
 
 ### Updates (anyone can append)
 
-> Formato: `YYYY-MM-DD HH:MM — <rol>: nota corta`
-
-- 2026-04-18 — coordinator: docs maestra completa (vision, architecture, roadmap, conventions, ADRs, workflow, data-model, ai-strategy, game-design, briefings agentes, state, runbooks, templates). Próximo: scaffolding monorepo.
-- 2026-04-19 — coordinator: equipo multi-agente levantado (4 especialistas + coordinator). Los 4 especialistas hicieron check-in y quedan draftando previews de T003/T004+T007/T005/T006 mientras arranco T001. T001 pausada por B001 (Node+pnpm no instalados, esperando humano).
-- 2026-04-19 — coordinator: B001 resuelto (Node 25.9 + pnpm 10.33). Scaffolding completo T001–T007 + CI (T002) + `infra/`. `pnpm install · lint · typecheck · test · build` verdes en los 9 proyectos del workspace; web sirve la landing en :3000 y el test de Colyseus conecta por WS. Pendiente: verificación runtime del esquema Supabase (T007), bloqueada por B002 (Docker).
-- 2026-04-19 — coordinator: B002 resuelto (Docker 29.5.2). T007 verificada end-to-end: Supabase local levanta, la migración aplica las 8 tablas con RLS, tipos regenerados (`packages/types/src/db.ts`, 510 líneas). **DoD del Sprint 0 cumplida al 100%.** PR #1 abierto con CI verde en GitHub Actions.
+- 2026-06-15 — coordinator: Fase 0 + infra + 5 features de Fase 1 (T008–T013) cerradas y en prod. Docs de estado actualizados. Arranca T014 (cierre Fase 1: audio + pulido + mobile).
 
 ### Blockers activos
 
-Ver `state/BLOCKERS.md`. **(Ninguno.)** B001 y B002 resueltos.
+Ver `state/BLOCKERS.md`. **(Ninguno.)**
 
 ---
 
 ## Sprint history (resumen)
 
-> Después de cerrar un sprint, mover el contenido completo a `state/CHANGELOG.md` y dejar acá solo una línea de resumen.
-
-(Vacío — Sprint 0 es el primero.)
+- **Sprint 0 — Foundations & Documentación maestra** (2026-04-18 → 2026-04-25): docs maestra completa + scaffolding del monorepo (T001–T007) + CI + esquema Supabase. Detalle en `state/CHANGELOG.md`.
