@@ -8,6 +8,7 @@ import { playSfx } from '@/lib/audio/sfx';
 import {
   createKahootRoom,
   joinKahootRoom,
+  reconnectKahootRoom,
   snapshot,
   type KahootSnapshot,
 } from '@/lib/realtime/kahoot-client';
@@ -32,7 +33,10 @@ export default function SalaPage() {
   const [code, setCode] = useState('');
   const [now, setNow] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
+  const [reconnecting, setReconnecting] = useState(false);
   const revealedRef = useRef(-1);
+  const tokenRef = useRef('');
+  const leftRef = useRef(false);
 
   useEffect(() => {
     const c = new URLSearchParams(window.location.search).get('code');
@@ -58,19 +62,52 @@ export default function SalaPage() {
 
   useEffect(
     () => () => {
+      leftRef.current = true;
       void roomRef.current?.leave();
     },
     [],
   );
 
-  function bind(room: Room) {
+  async function attemptReconnect() {
+    const token = tokenRef.current;
+    if (!token || leftRef.current) {
+      setJoined(false);
+      return;
+    }
+    setReconnecting(true);
+    for (let i = 0; i < 5 && !leftRef.current; i++) {
+      try {
+        bind(await reconnectKahootRoom(token), true);
+        setReconnecting(false);
+        return;
+      } catch {
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+    }
+    setReconnecting(false);
+    setJoined(false);
+    if (!leftRef.current) setError('Se perdió la conexión con la sala.');
+  }
+
+  function bind(room: Room, isReconnect = false) {
     roomRef.current = room;
+    tokenRef.current = room.reconnectionToken;
     setSessionId(room.sessionId);
     setJoined(true);
-    revealedRef.current = -1;
-    room.onStateChange((state) => setSnap(snapshot(state)));
+    if (!isReconnect) revealedRef.current = -1;
+    room.onStateChange((state) => {
+      tokenRef.current = room.reconnectionToken;
+      setSnap(snapshot(state));
+    });
     room.onError((_code, message) => setError(message ?? 'Error de sala'));
-    room.onLeave(() => setJoined(false));
+    // code 1000 = salida consentida; otros = caída → intentar reconectar.
+    room.onLeave((code) => {
+      if (leftRef.current || code === 1000) {
+        setJoined(false);
+        return;
+      }
+      void attemptReconnect();
+    });
   }
 
   async function create() {
@@ -181,6 +218,11 @@ export default function SalaPage() {
 
   return (
     <main className="mx-auto flex max-w-lg flex-col gap-5 px-4 py-8">
+      {reconnecting ? (
+        <div className="bg-accent/20 text-accent-foreground rounded-xl px-4 py-2 text-center text-sm font-semibold">
+          Reconectando…
+        </div>
+      ) : null}
       <div className="flex items-center justify-between">
         <Badge variant="muted">{snap.topic}</Badge>
         {snap.totalQuestions > 0 && snap.questionIndex >= 0 ? (

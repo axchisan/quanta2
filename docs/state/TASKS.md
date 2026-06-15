@@ -192,7 +192,19 @@
 - **Acceptance:**
   - KahootRoom verificada end-to-end con cliente Node contra **Gemini real**: genera preguntas, 2 jugadores, flujo completo, `correctIndex` oculto durante la pregunta y revelado en el reveal.
   - `/sala` SSR 200; `lint/typecheck/test/build` verdes. `GEMINI_API_KEY` seteada en el game-server de Coolify (aplica al redeploy).
-- **Notes:** Falta prueba humana multi-dispositivo en prod. Pendiente Fase 2: Duelo 1v1, reconexión, chat, persistir resultados de sala.
+- **Notes:** Falta prueba humana multi-dispositivo en prod. Pendiente Fase 2: Duelo 1v1, chat, persistir resultados de sala.
+
+### T016 — Kahoot: reconexión + migración de anfitrión (Fase 2)
+
+- **Owner:** backend-realtime / ui-web
+- **Status:** done (2026-06-15)
+- **Priority:** P1 (Fase 2)
+- **Sprint:** 2
+- **Description:** Robustez de salas para uso real en clase (wifi inestable). Server: `onLeave` async con `allowReconnection(30s)` ante caídas no consentidas (retiene al jugador con `connected=false`, recupera `sessionId` y score al volver); migración de anfitrión al primer jugador conectado si el host se va; avance de ronda si todos los que quedan ya respondieron. Web `/sala`: reconexión automática (`reconnectKahootRoom`, 5 reintentos) ante caída inesperada + banner "Reconectando…".
+- **Acceptance:**
+  - Test de integración: caída no consentida → retención → reconexión con mismo `sessionId` → migración de anfitrión al salir el host. ✅
+  - `lint/typecheck/test/build` verdes (web + game-server).
+- **Notes:** Pendiente Fase 2: persistir resultados de sala (atribuir score Kahoot a la cuenta), Duelo 1v1, chat.
 
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 
