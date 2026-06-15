@@ -148,9 +148,19 @@
   - Verificado contra prod: `[1,2,1,2]` → correcto `score 370`; `[1,1,1,1]` → incorrecto; `[2,4,2,4]` (no reducido) → incorrecto; intentos persistidos.
   - Tests del validador + `lint/typecheck/test/build` verdes.
 
----
+### T012 — Cuenta con Google + puntaje persistente (Fase 1)
 
-## Backlog (sin sprint asignado)
+- **Owner:** ui-web / backend-realtime
+- **Status:** done (2026-06-15)
+- **Priority:** P0
+- **Sprint:** 1
+- **Description:** Auth real con Supabase (Google OAuth). `useAuth` (sesión browser, signIn/signOut), `AuthNav` en el layout. Los intentos se atribuyen al usuario logueado: el cliente envía el JWT, la ruta `submit` lo verifica server-side y guarda `user_id`. Página `/mis-puntajes` (lee los intentos del dueño vía RLS `auth.uid()`).
+- **Config (vía MCP en Supabase):** `GOTRUE_EXTERNAL_GOOGLE_ENABLED/CLIENT_ID/SECRET/REDIRECT_URI`, `ADDITIONAL_REDIRECT_URLS` (allow-list), `API_EXTERNAL_URL`. Redeploy del servicio.
+- **Acceptance:**
+  - `/auth/v1/settings` → `google: true`; `authorize?provider=google` redirige a Google con el client_id y callback correctos.
+  - RLS `challenge_attempts_select_own = (user_id = auth.uid())` verificada; `/mis-puntajes` SSR 200; build/typecheck/test/lint verdes.
+  - **Pendiente de prueba humana:** el clic final de login en el consent de Google (interactivo).
+- **Notes:** El cliente OAuth de Google lo creó el usuario (creds en env del servicio Supabase, no en el repo).
 
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 

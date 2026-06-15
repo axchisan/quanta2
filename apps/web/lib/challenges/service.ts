@@ -96,6 +96,8 @@ export interface SubmitAttemptInput {
   challengeId: string;
   timeTakenMs: number;
   submittedAnswer: Record<string, unknown>;
+  /** Si el jugador está logueado, el intento se atribuye a su cuenta. */
+  userId?: string;
 }
 
 export async function submitAttempt(db: Db, input: SubmitAttemptInput): Promise<AttemptResult> {
@@ -159,6 +161,7 @@ export async function submitAttempt(db: Db, input: SubmitAttemptInput): Promise<
     time_taken_ms: input.timeTakenMs,
     submitted_answer: input.submittedAnswer as unknown as Json,
     feedback: explanation,
+    ...(input.userId ? { user_id: input.userId } : {}),
   });
   if (error) throw new ChallengeError('attempt_persist_failed', error.message, 500);
 
