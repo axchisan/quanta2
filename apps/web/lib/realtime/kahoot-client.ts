@@ -82,12 +82,18 @@ export function createKahootRoom(opts: {
   nickname: string;
   topic: string;
   difficulty: string;
+  /** JWT de Supabase para atribuir el resultado a la cuenta (si está logueado). */
+  accessToken?: string;
 }): Promise<Room> {
   return getClient().create('kahoot', { ...opts, count: 5 });
 }
 
-export function joinKahootRoom(roomId: string, nickname: string): Promise<Room> {
-  return getClient().joinById(roomId, { nickname });
+export function joinKahootRoom(
+  roomId: string,
+  nickname: string,
+  accessToken?: string,
+): Promise<Room> {
+  return getClient().joinById(roomId, { nickname, ...(accessToken ? { accessToken } : {}) });
 }
 
 /** Reconecta a una sala tras una caída usando el token de reconexión de Colyseus. */

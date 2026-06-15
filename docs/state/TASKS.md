@@ -231,6 +231,31 @@
   system, sistema de avatares animados, rework de pantallas, sonido/celebración) que
   consumen esta investigación. No codear pulido dentro de T017.
 
+### T018 — Persistir resultados de sala Kahoot (Fase 2)
+
+- **Owner:** backend-realtime / ui-web
+- **Status:** review (2026-06-15) — rama `feat/backend-realtime-T018-persist-kahoot-results`
+- **Priority:** P1 (Fase 2)
+- **Sprint:** 2
+- **BlockedBy:** —
+- **Description:** Atar el puntaje de la partida Kahoot a la cuenta Google para que cuente
+  en "Mis puntajes". El cliente pasa el `accessToken` de Supabase en `create`/`join`; el
+  game-server lo verifica server-side (`auth.getUser`, mismo patrón que `attempts/submit`)
+  y, al `finish`, persiste el resultado agregado por jugador logueado en la **tabla nueva
+  `game_results`** (migración `0004`) — no se reutiliza `challenge_attempts` (las preguntas
+  Kahoot son efímeras, no son `challenges`). Upsert idempotente por `(user_id, room_code)`,
+  en background (no bloquea el game loop). Invitados (sin login) no se persisten. `/mis-puntajes`
+  ahora muestra dos secciones: "Partidas con amigos" (game_results) y "Retos en solitario".
+- **Acceptance:**
+  - Migración `0004` aplicada a prod; grants + RLS verificados (anon no lee ajeno, owner sí).
+  - Camino real verificado contra prod: upsert service-role con `on_conflict=user_id,room_code`
+    → idempotente (1 fila, score mergeado); ANON read → `[]`; cleanup sin residuos.
+  - `lint/typecheck/test/build` verdes (web + game-server). Env del game-server en Coolify ya
+    tiene `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`.
+  - **Pendiente de prueba humana:** join con JWT real de Google + partida multi-dispositivo.
+- **Notes:** Decisiones de diseño registradas en `DECISIONS.md` (2026-06-15). Pendiente Fase 2:
+  Duelo 1v1, chat de sala. T017 (investigación de diseño) sigue pending.
+
 > Tasks identificadas pero no priorizadas todavía. El Coordinador las mueve a sprint cuando corresponda.
 
 - **B001** — Configurar Husky + lint-staged en pre-commit.

@@ -217,6 +217,51 @@ export type Database = {
         };
         Relationships: [];
       };
+      game_results: {
+        Row: {
+          correct_count: number;
+          created_at: string;
+          id: string;
+          mode: string;
+          nickname: string;
+          rank: number;
+          room_code: string;
+          score: number;
+          topic: string;
+          total_players: number;
+          total_questions: number;
+          user_id: string;
+        };
+        Insert: {
+          correct_count: number;
+          created_at?: string;
+          id?: string;
+          mode?: string;
+          nickname: string;
+          rank: number;
+          room_code: string;
+          score: number;
+          topic: string;
+          total_players: number;
+          total_questions: number;
+          user_id: string;
+        };
+        Update: {
+          correct_count?: number;
+          created_at?: string;
+          id?: string;
+          mode?: string;
+          nickname?: string;
+          rank?: number;
+          room_code?: string;
+          score?: number;
+          topic?: string;
+          total_players?: number;
+          total_questions?: number;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       guest_sessions: {
         Row: {
           created_at: string;

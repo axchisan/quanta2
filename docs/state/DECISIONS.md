@@ -40,6 +40,22 @@
 - **2026-06-15 — backend (T015):** Sala Kahoot sobre **Colyseus** (ADR-0004), no Supabase Realtime — estado authoritative para anti-cheat. El server genera las preguntas con Gemini (el game-server tiene `@quanta/ai-gateway` + `GEMINI_API_KEY`), **en background** porque `onCreate` async bloquearía la respuesta de matchmaking (timeout → socket hang up); un flag `ready` avisa cuando están. La sala usa el **`roomId` de Colyseus como código compartible** (no se reusan las salas Supabase de T008, que quedan legacy). `correctIndex` se mantiene en -1 en el state sincronizado durante la pregunta y solo se setea en el reveal (anti-cheat). El lobby de T008 (`/room`) queda como legacy; la landing apunta a `/sala` (Kahoot real).
 - **2026-06-15 — infra/web (T012):** Auth con **Google OAuth** (no Magic Link: el Supabase no tiene SMTP; no email+password: ADR-0005). Habilitado en el Supabase self-hosted agregando `GOTRUE_EXTERNAL_GOOGLE_*` como env vars del servicio (el `auth` usa `env_file: .env`, así que se inyectan al contenedor) + `ADDITIONAL_REDIRECT_URLS` → `GOTRUE_URI_ALLOW_LIST` para permitir el redirect a la app. Atribución de intentos: el cliente manda el JWT en `Authorization`, la ruta lo verifica con `auth.getUser(token)` (service role) y guarda `user_id`. "Mis puntajes" lee directo con el cliente browser + RLS `auth.uid()` (no API route). Sesión client-side en localStorage (`@supabase/supabase-js`, sin `@supabase/ssr` para MVP).
 
+- **2026-06-15 — backend/web (T018):** Persistencia de resultados Kahoot en **tabla nueva
+  `game_results`** (migración `0004`), NO reutilizando `challenge_attempts`. Razón: las
+  preguntas Kahoot son efímeras (generadas in-memory por IA, no son filas de `challenges`),
+  y `challenge_attempts.challenge_id` es NOT NULL con FK a `challenges` → reutilizarla forzaría
+  persistir cada pregunta como challenge (contamina el catálogo) o un id artificial. Un Kahoot
+  es una *partida*, no un *intento de reto*. `game_results` guarda el resultado agregado por
+  jugador (score, rank, aciertos, topic) con `room_code` = el `roomId` de Colyseus (string, **sin
+  FK a `rooms`** legacy de T008, coherente con la decisión de T015). **Auth del jugador en la sala:**
+  el cliente pasa el `access_token` de Supabase como opción en `create`/`join`; el server lo
+  verifica con `auth.getUser(token)` (service client, mismo patrón que `attempts/submit`) y guarda
+  el `user_id` en un Map privado por `sessionId` (no se sincroniza al cliente). Solo se persisten
+  jugadores logueados (`user_id` not null); invitados no (nada que atribuir). La persistencia corre
+  **en background** desde `finish()` (`void this.persistResults()`) — nunca bloquea el game loop — con
+  upsert idempotente `onConflict: 'user_id,room_code'`. Si faltan `SUPABASE_URL`/`SERVICE_ROLE_KEY`
+  (dev/tests), la persistencia hace no-op silencioso. `/mis-puntajes` ahora lee ambas fuentes.
+
 - **2026-06-15 — backend/web (T016):** Reconexión Kahoot vía `allowReconnection(client, 30)` en `onLeave` (ahora async). Se distingue salida **consentida** (`onLeave(_, consented=true)` → remover ya) de **caída** (`consented=false` → retener 30s). El cliente fuerza una caída en tests con `room.leave(false)` (cierra el transporte sin enviar LEAVE). Web reconecta con `Client.reconnect(reconnectionToken)` y re-bindea los listeners (el room es un objeto nuevo). **Migración de anfitrión:** `hostId` no es dueño del game loop (el server auto-avanza), así que migrar al primer jugador conectado solo afecta quién puede iniciar en el lobby; se hace igual por consistencia. El `reconnectionToken` se captura en cada `onStateChange` (estable por sesión) por si la caída es abrupta.
 
 ### Retro Sprint 0
