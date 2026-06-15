@@ -14,9 +14,11 @@
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@quanta/db": "workspace:*",
+    "@quanta/game-engine": "workspace:*",
     "@quanta/types": "workspace:*",
     "@quanta/ui": "workspace:*",
     "next": "^15.1.3",
+    "phaser": "^3.90.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.79.0",
