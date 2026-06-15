@@ -40,6 +40,23 @@
 - **2026-06-15 — backend (T015):** Sala Kahoot sobre **Colyseus** (ADR-0004), no Supabase Realtime — estado authoritative para anti-cheat. El server genera las preguntas con Gemini (el game-server tiene `@quanta/ai-gateway` + `GEMINI_API_KEY`), **en background** porque `onCreate` async bloquearía la respuesta de matchmaking (timeout → socket hang up); un flag `ready` avisa cuando están. La sala usa el **`roomId` de Colyseus como código compartible** (no se reusan las salas Supabase de T008, que quedan legacy). `correctIndex` se mantiene en -1 en el state sincronizado durante la pregunta y solo se setea en el reveal (anti-cheat). El lobby de T008 (`/room`) queda como legacy; la landing apunta a `/sala` (Kahoot real).
 - **2026-06-15 — infra/web (T012):** Auth con **Google OAuth** (no Magic Link: el Supabase no tiene SMTP; no email+password: ADR-0005). Habilitado en el Supabase self-hosted agregando `GOTRUE_EXTERNAL_GOOGLE_*` como env vars del servicio (el `auth` usa `env_file: .env`, así que se inyectan al contenedor) + `ADDITIONAL_REDIRECT_URLS` → `GOTRUE_URI_ALLOW_LIST` para permitir el redirect a la app. Atribución de intentos: el cliente manda el JWT en `Authorization`, la ruta lo verifica con `auth.getUser(token)` (service role) y guarda `user_id`. "Mis puntajes" lee directo con el cliente browser + RLS `auth.uid()` (no API route). Sesión client-side en localStorage (`@supabase/supabase-js`, sin `@supabase/ssr` para MVP).
 
+- **2026-06-15 — ai-gateway/backend/web (T019):** **Groq como proveedor de texto primario**
+  para la generación de trivia (game-server y web), con Gemini de fallback. Motivo: Gemini
+  (`gemini-2.5-flash` free-tier) devolvía **HTTP 503** en horas pico y, al ser el único proveedor,
+  la sala quedaba sin preguntas colgada en "Generando preguntas con IA…". Groq (`createGroqProvider`,
+  API compatible OpenAI, `llama-3.3-70b-versatile`, `response_format: json_object`, ~1s) es rápido y
+  estable. `runTextChain` ya soporta el fallback; el orden se controla por el array de `textProviders`
+  (no por `featureProviderOrder` del config, que el gateway no usa). **Generación en paralelo**
+  (`Promise.allSettled` de N preguntas) en vez del `for await` secuencial → mucho más rápido y
+  tolerante a fallos parciales; flag `genFailed` + mensaje `regenerate` (retry del host). **Prompt
+  con audiencia** (`niños`/`secundaria`/`universidad`) que ajusta vocabulario/profundidad + `nonce`
+  para variedad en lote; el cache key incluye la audiencia. **Personalización en `/sala`:** tema libre
+  + audiencia + nombre pre-cargado de la sesión (editable) y recordado en `localStorage` para invitados.
+  **Reconexión persistente:** el `reconnectionToken` se guarda en `localStorage` (TTL 45s, dentro de la
+  ventana de `allowReconnection`) para ofrecer "volver a la sala" tras recargar la página. `GROQ_API_KEY`
+  en env de Coolify (game-server + web). Observación: el LLM a veces da `correctIndex` incoherente con
+  su explicación → se planteó **T024** (validación de coherencia).
+
 - **2026-06-15 — backend/web (T018):** Persistencia de resultados Kahoot en **tabla nueva
   `game_results`** (migración `0004`), NO reutilizando `challenge_attempts`. Razón: las
   preguntas Kahoot son efímeras (generadas in-memory por IA, no son filas de `challenges`),

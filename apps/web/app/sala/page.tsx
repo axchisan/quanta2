@@ -12,7 +12,11 @@ import {
   joinKahootRoom,
   reconnectKahootRoom,
   snapshot,
+  saveResumeInfo,
+  loadResumeInfo,
+  clearResumeInfo,
   type KahootSnapshot,
+  type ResumeInfo,
 } from '@/lib/realtime/kahoot-client';
 
 const TOPICS = ['Cinemática', 'Dinámica', 'Energía', 'Reacciones químicas', 'Estructura atómica'];
@@ -21,6 +25,12 @@ const DIFFS = [
   { label: 'Media', v: 'medium' },
   { label: 'Difícil', v: 'hard' },
 ] as const;
+const AUDIENCES = [
+  { label: 'Niños', v: 'ninos', hint: 'Primaria' },
+  { label: 'Secundaria', v: 'secundaria', hint: 'Bachillerato' },
+  { label: 'Universidad', v: 'universidad', hint: 'Profesional' },
+] as const;
+const NICK_KEY = 'quanta:nickname';
 
 /** Token de Supabase del usuario logueado (para atribuir el resultado a su cuenta). */
 async function getAccessToken(): Promise<string | undefined> {
@@ -42,8 +52,11 @@ export default function SalaPage() {
   const [error, setError] = useState<string | null>(null);
   const [nickname, setNickname] = useState('');
   const [topic, setTopic] = useState<string>(TOPICS[0] ?? 'Cinemática');
+  const [customTopic, setCustomTopic] = useState('');
+  const [audience, setAudience] = useState<'ninos' | 'secundaria' | 'universidad'>('secundaria');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [code, setCode] = useState('');
+  const [resume, setResume] = useState<ResumeInfo | null>(null);
   const [now, setNow] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [reconnecting, setReconnecting] = useState(false);
@@ -54,7 +67,20 @@ export default function SalaPage() {
   useEffect(() => {
     const c = new URLSearchParams(window.location.search).get('code');
     if (c) setCode(c);
+    // Nombre recordado del navegador (identidad de invitado) + sala para reconectar.
+    try {
+      const saved = localStorage.getItem(NICK_KEY);
+      if (saved) setNickname(saved);
+    } catch {
+      /* noop */
+    }
+    setResume(loadResumeInfo());
   }, []);
+
+  // Si hay sesión iniciada, prellenar el nombre con el de la cuenta (editable).
+  useEffect(() => {
+    if (user?.name) setNickname((prev) => prev || user.name || '');
+  }, [user]);
 
   useEffect(() => {
     if (snap?.phase !== 'question') return;
@@ -80,6 +106,11 @@ export default function SalaPage() {
     },
     [],
   );
+
+  // Partida terminada → no tiene sentido ofrecer reconexión.
+  useEffect(() => {
+    if (snap?.phase === 'finished') clearResumeInfo();
+  }, [snap?.phase]);
 
   async function attemptReconnect() {
     const token = tokenRef.current;
@@ -107,15 +138,25 @@ export default function SalaPage() {
     tokenRef.current = room.reconnectionToken;
     setSessionId(room.sessionId);
     setJoined(true);
+    setResume(null);
+    leftRef.current = false;
     if (!isReconnect) revealedRef.current = -1;
+    saveResumeInfo({ roomId: room.roomId, token: room.reconnectionToken, nickname: nickname.trim() });
     room.onStateChange((state) => {
       tokenRef.current = room.reconnectionToken;
+      // Mantené fresco el token persistido por si el usuario recarga la página.
+      saveResumeInfo({
+        roomId: room.roomId,
+        token: room.reconnectionToken,
+        nickname: nickname.trim(),
+      });
       setSnap(snapshot(state));
     });
     room.onError((_code, message) => setError(message ?? 'Error de sala'));
     // code 1000 = salida consentida; otros = caída → intentar reconectar.
     room.onLeave((code) => {
       if (leftRef.current || code === 1000) {
+        clearResumeInfo();
         setJoined(false);
         return;
       }
@@ -123,16 +164,45 @@ export default function SalaPage() {
     });
   }
 
+  /** Reconecta a la sala previa guardada (tras recargar la página). */
+  async function resumeRoom() {
+    if (!resume) return;
+    setError(null);
+    setBusy(true);
+    setReconnecting(true);
+    try {
+      bind(await reconnectKahootRoom(resume.token), true);
+    } catch {
+      clearResumeInfo();
+      setResume(null);
+      setError('La sala anterior ya no está disponible.');
+    } finally {
+      setReconnecting(false);
+      setBusy(false);
+    }
+  }
+
+  function rememberNickname() {
+    try {
+      localStorage.setItem(NICK_KEY, nickname.trim());
+    } catch {
+      /* noop */
+    }
+  }
+
   async function create() {
     setError(null);
     setBusy(true);
+    rememberNickname();
     try {
       const accessToken = await getAccessToken();
+      const effectiveTopic = customTopic.trim() || topic;
       bind(
         await createKahootRoom({
           nickname: nickname.trim(),
-          topic,
+          topic: effectiveTopic,
           difficulty,
+          audience,
           ...(accessToken ? { accessToken } : {}),
         }),
       );
@@ -146,6 +216,7 @@ export default function SalaPage() {
   async function join() {
     setError(null);
     setBusy(true);
+    rememberNickname();
     try {
       const accessToken = await getAccessToken();
       bind(await joinKahootRoom(code.trim(), nickname.trim(), accessToken));
@@ -172,6 +243,29 @@ export default function SalaPage() {
           ← Inicio
         </Link>
         <h1 className="text-center text-3xl font-extrabold tracking-tight">Sala con amigos 🎉</h1>
+
+        {resume ? (
+          <Card className="border-primary grid gap-2 border-2 text-center">
+            <p className="text-sm font-semibold">Tenías una partida en curso</p>
+            <p className="text-muted-foreground text-xs">
+              Sala <span className="font-bold">{resume.roomId}</span> — podés volver a entrar.
+            </p>
+            <Button size="lg" disabled={busy} onClick={() => void resumeRoom()}>
+              ↩ Volver a mi sala
+            </Button>
+            <button
+              type="button"
+              className="text-muted-foreground text-xs underline"
+              onClick={() => {
+                clearResumeInfo();
+                setResume(null);
+              }}
+            >
+              Descartar
+            </button>
+          </Card>
+        ) : null}
+
         <Card className="grid gap-3">
           <label className="text-sm font-medium">Tu nombre</label>
           <Input
@@ -181,19 +275,45 @@ export default function SalaPage() {
             maxLength={20}
           />
           <p className="mt-2 text-sm font-semibold">Crear una sala nueva</p>
+          <span className="text-muted-foreground text-xs">Elegí un tema o escribí el tuyo</span>
           <div className="flex flex-wrap gap-2">
             {TOPICS.map((t) => (
               <Button
                 key={t}
                 type="button"
                 size="sm"
-                variant={t === topic ? 'default' : 'outline'}
-                onClick={() => setTopic(t)}
+                variant={t === topic && !customTopic.trim() ? 'default' : 'outline'}
+                onClick={() => {
+                  setTopic(t);
+                  setCustomTopic('');
+                }}
               >
                 {t}
               </Button>
             ))}
           </div>
+          <Input
+            value={customTopic}
+            onChange={(e) => setCustomTopic(e.target.value)}
+            placeholder="Tema personalizado (ej: leyes de Newton, tabla periódica…)"
+            maxLength={64}
+          />
+          <span className="text-muted-foreground text-xs">Nivel del público</span>
+          <div className="flex gap-2">
+            {AUDIENCES.map((a) => (
+              <Button
+                key={a.v}
+                type="button"
+                size="sm"
+                variant={a.v === audience ? 'default' : 'outline'}
+                onClick={() => setAudience(a.v)}
+                title={a.hint}
+              >
+                {a.label}
+              </Button>
+            ))}
+          </div>
+          <span className="text-muted-foreground text-xs">Dificultad</span>
           <div className="flex gap-2">
             {DIFFS.map((d) => (
               <Button
@@ -273,7 +393,22 @@ export default function SalaPage() {
             ))}
           </ul>
           <div className="mt-5">
-            {isHost ? (
+            {snap.genFailed ? (
+              isHost ? (
+                <div className="grid gap-2">
+                  <p className="text-destructive text-sm">
+                    No se pudieron generar las preguntas 😕 (la IA está saturada).
+                  </p>
+                  <Button size="lg" variant="secondary" onClick={() => roomRef.current?.send('regenerate')}>
+                    ↻ Reintentar
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-sm">
+                  Hubo un problema generando preguntas. El anfitrión va a reintentar…
+                </p>
+              )
+            ) : isHost ? (
               snap.ready && snap.totalQuestions > 0 ? (
                 <Button size="lg" onClick={() => roomRef.current?.send('start')}>
                   ▶ Iniciar juego
