@@ -124,6 +124,18 @@
   - `POST /api/attempts/submit` verificado contra prod: predicción correcta → `score 187`, incorrecta → `score 0`, `correctValue` server-side; intento persistido en `challenge_attempts`.
   - Página `/jugar/caida-libre` SSR 200 con controles; `lint/typecheck/test/build` verdes.
 
+### T010 — Reto Trivia IA (Fase 1) + AI Gateway/Gemini
+
+- **Owner:** ai-gateway / ui-web
+- **Status:** done (2026-06-14)
+- **Priority:** P0
+- **Sprint:** 1
+- **Description:** Trivia de opción múltiple generada por IA. `ai-gateway`: provider **Gemini real** (`gemini-2.5-flash`, safety máximo, timeout/429/bloqueos), `parseTriviaQuestion` (Zod, out_of_scope), `generateTrivia` sin cache (variedad). `web`: `/api/ai/generate-trivia` (Gemini → valida → guarda reto `multiple_choice` con `solution` server-only → devuelve sin `correctIndex`), `submitAttempt` extendido para `multiple_choice`, página `/jugar/trivia` (picker tema/dificultad → generar → responder → feedback IA).
+- **Acceptance:**
+  - Verificado contra **Gemini real**: `generate-trivia` produce pregunta válida sin `correctIndex` (anti-cheat); responder correcto → `score 190`, incorrecto → `score 0` + explicación de la IA; intentos persistidos.
+  - `lint/typecheck/test (ai-gateway 8) /build` verdes.
+- **Notes:** Requiere `GEMINI_API_KEY` en el entorno (Coolify web env para prod).
+
 ---
 
 ## Backlog (sin sprint asignado)

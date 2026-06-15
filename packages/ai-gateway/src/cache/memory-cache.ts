@@ -1,4 +1,4 @@
-import type { AICache } from './types.js';
+import type { AICache } from './types';
 
 /** In-memory cache backed by a Map. Intended for tests and local dev. */
 export class MemoryCache implements AICache {
