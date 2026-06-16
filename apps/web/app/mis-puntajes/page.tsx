@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { Button } from '@quanta/ui';
 import { useAuth } from '@/lib/auth/use-auth';
 import { getBrowserClient } from '@/lib/supabase/browser';
+import { loadGuestHistory, type GuestMatch } from '@/lib/realtime/guest-history';
 
 interface AttemptRow {
   id: string;
@@ -34,7 +35,12 @@ export default function MisPuntajesPage() {
   const { user, loading: authLoading, signInWithGoogle } = useAuth();
   const [rows, setRows] = useState<AttemptRow[]>([]);
   const [matches, setMatches] = useState<MatchRow[]>([]);
+  const [guestMatches, setGuestMatches] = useState<GuestMatch[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setGuestMatches(loadGuestHistory());
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -73,10 +79,38 @@ export default function MisPuntajesPage() {
           ← Volver
         </Link>
         <h1 className="text-3xl font-bold tracking-tight">Mis puntajes</h1>
-        <p className="text-muted-foreground">Entrá con tu cuenta para ver tu progreso guardado.</p>
+        <p className="text-muted-foreground">
+          Entrá con tu cuenta para guardar tu progreso de forma permanente y en todos tus
+          dispositivos.
+        </p>
         <Button className="w-fit" onClick={() => void signInWithGoogle()}>
           Entrar con Google
         </Button>
+
+        {guestMatches.length > 0 ? (
+          <section className="mt-2 grid gap-2">
+            <h2 className="text-lg font-semibold">Tu progreso como invitado</h2>
+            <p className="text-muted-foreground text-xs">
+              Guardado solo en este dispositivo. Iniciá sesión para no perderlo.
+            </p>
+            <ul className="space-y-2">
+              {guestMatches.map((m, i) => (
+                <li
+                  key={`${m.at}-${i}`}
+                  className="border-border bg-card flex items-center justify-between rounded-lg border px-4 py-3"
+                >
+                  <span>
+                    {m.topic}{' '}
+                    <span className="text-muted-foreground text-sm">
+                      · #{m.rank}/{m.totalPlayers}
+                    </span>
+                  </span>
+                  <span className="text-primary font-semibold">{m.score}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
       </Screen>
     );
   }
