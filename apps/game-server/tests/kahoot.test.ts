@@ -62,4 +62,19 @@ describe('KahootRoom reconnection + host migration', () => {
 
     await roomB2.leave(true);
   }, 20_000);
+
+  it('genera un código de sala corto (6 chars) y permite unirse por él', async () => {
+    const url = `ws://localhost:${port}`;
+    const host = new Client(url);
+    const room = await host.create('kahoot', { nickname: 'Ana', topic: 'Energía', count: 1 });
+
+    expect(room.roomId).toMatch(/^[A-Z0-9]{6}$/);
+
+    const guest = new Client(url);
+    const guestRoom = await guest.joinById(room.roomId, { nickname: 'Beto' });
+    expect(guestRoom.roomId).toBe(room.roomId);
+
+    await guestRoom.leave(true);
+    await room.leave(true);
+  }, 20_000);
 });
