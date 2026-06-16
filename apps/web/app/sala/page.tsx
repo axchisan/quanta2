@@ -15,6 +15,8 @@ import {
   saveResumeInfo,
   loadResumeInfo,
   clearResumeInfo,
+  formatCode,
+  normalizeCode,
   type KahootSnapshot,
   type ResumeInfo,
 } from '@/lib/realtime/kahoot-client';
@@ -66,7 +68,7 @@ export default function SalaPage() {
 
   useEffect(() => {
     const c = new URLSearchParams(window.location.search).get('code');
-    if (c) setCode(c);
+    if (c) setCode(formatCode(c));
     // Nombre recordado del navegador (identidad de invitado) + sala para reconectar.
     try {
       const saved = localStorage.getItem(NICK_KEY);
@@ -248,7 +250,8 @@ export default function SalaPage() {
           <Card className="border-primary grid gap-2 border-2 text-center">
             <p className="text-sm font-semibold">Tenías una partida en curso</p>
             <p className="text-muted-foreground text-xs">
-              Sala <span className="font-bold">{resume.roomId}</span> — podés volver a entrar.
+              Sala <span className="font-mono font-bold">{formatCode(resume.roomId)}</span> — podés
+              volver a entrar.
             </p>
             <Button size="lg" disabled={busy} onClick={() => void resumeRoom()}>
               ↩ Volver a mi sala
@@ -335,13 +338,17 @@ export default function SalaPage() {
           </div>
           <Input
             value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Código de sala"
+            onChange={(e) => setCode(formatCode(e.target.value))}
+            placeholder="Código de sala (ABC-DEF)"
+            className="text-center font-mono tracking-widest uppercase"
+            inputMode="text"
+            autoCapitalize="characters"
+            maxLength={7}
           />
           <Button
             variant="secondary"
             size="lg"
-            disabled={!nickOk || code.trim().length < 4 || busy}
+            disabled={!nickOk || normalizeCode(code).length !== 6 || busy}
             onClick={() => void join()}
           >
             Unirme
@@ -380,7 +387,9 @@ export default function SalaPage() {
       {snap.phase === 'lobby' ? (
         <Card className="text-center">
           <p className="text-muted-foreground text-sm">Código de la sala — compartilo</p>
-          <p className="text-primary my-1 text-3xl font-extrabold tracking-widest">{roomId}</p>
+          <p className="text-primary my-1 font-mono text-4xl font-extrabold tracking-widest">
+            {formatCode(roomId)}
+          </p>
           <ul className="mx-auto mt-4 max-w-xs space-y-2 text-left">
             {snap.players.map((p) => (
               <li

@@ -97,7 +97,27 @@ export function joinKahootRoom(
   nickname: string,
   accessToken?: string,
 ): Promise<Room> {
-  return getClient().joinById(roomId, { nickname, ...(accessToken ? { accessToken } : {}) });
+  return getClient().joinById(normalizeCode(roomId), {
+    nickname,
+    ...(accessToken ? { accessToken } : {}),
+  });
+}
+
+// ── Código de sala estilo Kahoot (6 chars, mostrado como ABC-DEF) ────────────
+const CODE_LENGTH = 6;
+
+/** Normaliza un código: solo alfanumérico, mayúsculas, máx 6 chars. */
+export function normalizeCode(raw: string): string {
+  return raw
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .toUpperCase()
+    .slice(0, CODE_LENGTH);
+}
+
+/** Formatea para mostrar/escribir con guion: `ABC-DEF`. */
+export function formatCode(raw: string): string {
+  const c = normalizeCode(raw);
+  return c.length > 3 ? `${c.slice(0, 3)}-${c.slice(3)}` : c;
 }
 
 /** Reconecta a una sala tras una caída usando el token de reconexión de Colyseus. */

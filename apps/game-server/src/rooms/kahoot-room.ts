@@ -1,9 +1,26 @@
 import { ArraySchema, MapSchema, Schema, type } from '@colyseus/schema';
-import { Room } from 'colyseus';
+import { matchMaker, Room } from 'colyseus';
 import type { Client } from 'colyseus';
 import { parseTriviaQuestion } from '@quanta/ai-gateway';
 import type { TriviaAudience, TriviaQuestion } from '@quanta/ai-gateway';
 import { getAIGateway } from '../ai/gateway.js';
+
+// Código de sala corto estilo Kahoot: 6 chars sin caracteres ambiguos (0/O/1/I/L).
+const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const CODE_LENGTH = 6;
+
+/** Genera un código de 6 chars único (verifica contra el matchmaker). */
+async function generateRoomCode(): Promise<string> {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    let code = '';
+    for (let i = 0; i < CODE_LENGTH; i++) {
+      code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+    }
+    const existing = await matchMaker.query({ roomId: code });
+    if (existing.length === 0) return code;
+  }
+  return ''; // improbable: dejamos el id por defecto de Colyseus
+}
 
 const AUDIENCES: readonly TriviaAudience[] = ['ninos', 'secundaria', 'universidad'];
 function normalizeAudience(value: string | undefined): TriviaAudience {
@@ -68,7 +85,12 @@ export class KahootRoom extends Room<KahootState> {
   private readonly correctCounts = new Map<string, number>();
   private persisted = false;
 
-  override onCreate(options: KahootCreateOptions): void {
+  override async onCreate(options: KahootCreateOptions): Promise<void> {
+    // Código corto estilo Kahoot. Colyseus permite reemplazar roomId en onCreate;
+    // el listing y el registro local se setean DESPUÉS de onCreate (consistente).
+    const code = await generateRoomCode();
+    if (code) this.roomId = code;
+
     const state = new KahootState();
     state.topic = (options.topic ?? 'Cinemática').trim().slice(0, 64) || 'Cinemática';
     this.setState(state);

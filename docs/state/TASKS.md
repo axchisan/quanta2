@@ -293,13 +293,17 @@
 
 ### T020 — Códigos de sala estilo Kahoot (6 caracteres + auto-formato)
 
-- **Owner:** backend-realtime / ui-web · **Status:** pending · **Priority:** P1 · **Sprint:** 2/3
-- **Description:** Reemplazar el `roomId` de Colyseus (9 chars) por un **código corto de 6
-  caracteres** estilo Kahoot, y que el input lo **auto-formatee** (`wf5-ab2`). Requiere
-  customizar la generación del room id en Colyseus (recipe `matchMaker.query` para unicidad)
-  y adaptar `joinById` + el campo `room_code` de `game_results`. **Riesgo:** toca matchmaking
-  → testear bien antes de prod. Auto-formato del input es la parte fácil; el id corto es lo
-  delicado.
+- **Owner:** backend-realtime / ui-web · **Status:** review (2026-06-15) — rama `feat/backend-realtime-T020-codigos-sala-cortos`
+- **Priority:** P1 · **Sprint:** 2/3
+- **Description:** `roomId` corto de **6 caracteres** estilo Kahoot (alfabeto sin ambiguos
+  `0/O/1/I/L`), mostrado/escrito como `ABC-DEF`. Colyseus 0.16 permite reemplazar `this.roomId`
+  en `onCreate` (el listing y el registro local se setean DESPUÉS); se genera con
+  `matchMaker.query` para garantizar unicidad. El input se **auto-formatea** (mayúsculas + guion)
+  y `joinKahootRoom` normaliza antes de `joinById`. El `room_code` de `game_results` hereda el
+  código corto.
+- **Acceptance:** test de integración (genera `^[A-Z0-9]{6}$` + join por el código) verde;
+  `lint/typecheck/test/build` verdes (game-server 5). Reconexión/persistencia siguen funcionando.
+- **Notes:** Pendiente prueba humana multi-dispositivo (crear → compartir código → unirse).
 
 ### T021 — Sesiones de invitado persistentes (browser-based)
 
