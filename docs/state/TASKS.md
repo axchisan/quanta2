@@ -307,13 +307,19 @@
 
 ### T021 — Sesiones de invitado persistentes (browser-based)
 
-- **Owner:** backend-realtime / ui-web · **Status:** pending · **Priority:** P1 · **Sprint:** 3
-- **Description:** Para usuarios **sin login**, generar una identidad de invitado en el navegador
-  (id en `localStorage`) y guardar una **sesión temporal** (puntaje, reconexión) que **no**
-  persista a largo plazo como las autenticadas. Atar resultados de invitado a `game_results`
-  vía `guest_session_id` (hoy la tabla exige `user_id`; habría que relajar el NOT NULL o usar
-  la tabla `guest_sessions` existente). Define política de expiración/limpieza. Parte ya se
-  adelantó en T019 (nombre recordado + reconexión por token); falta la persistencia del puntaje.
+- **Owner:** ui-web · **Status:** review (2026-06-15) — rama `feat/ui-web-T021-sesiones-invitado`
+- **Priority:** P1 · **Sprint:** 3
+- **Description:** Para usuarios **sin login**, identidad de invitado estable en el navegador
+  (`quanta:guest-id`) e **historial local de partidas** (`quanta:guest-history`, máx 20). Al
+  terminar una partida sin sesión, se guarda `{topic, score, rank, totalPlayers, totalQuestions}`
+  en `localStorage` (módulo `lib/realtime/guest-history.ts`). `/mis-puntajes` muestra ese historial
+  bajo "Tu progreso como invitado" con CTA a iniciar sesión. **Decisión:** se mantiene **local**
+  (no se persiste en DB como pidió el usuario: "no a largo plazo como las autenticadas"); el nombre
+  recordado + la reconexión por token ya venían de T019.
+- **Acceptance:** `lint/typecheck/test/build` verdes; partida de invitado aparece en "Mis puntajes"
+  (solo este dispositivo); logueados siguen yendo a `game_results`.
+- **Notes:** Si en el futuro se quiere puntaje de invitado **cross-device**, habría que persistir en
+  DB vía `guest_session_id` (relajar `game_results.user_id` o usar `guest_sessions`) — fuera de alcance.
 
 ### T022 — Sistema de avatares estilo Kahoot (gestión + edición)
 
