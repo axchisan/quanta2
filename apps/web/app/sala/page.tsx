@@ -20,6 +20,7 @@ import {
   type KahootSnapshot,
   type ResumeInfo,
 } from '@/lib/realtime/kahoot-client';
+import { getGuestId, saveGuestMatch } from '@/lib/realtime/guest-history';
 
 const TOPICS = ['Cinemática', 'Dinámica', 'Energía', 'Reacciones químicas', 'Estructura atómica'];
 const DIFFS = [
@@ -65,6 +66,7 @@ export default function SalaPage() {
   const revealedRef = useRef(-1);
   const tokenRef = useRef('');
   const leftRef = useRef(false);
+  const savedMatchRef = useRef(false);
 
   useEffect(() => {
     const c = new URLSearchParams(window.location.search).get('code');
@@ -113,6 +115,23 @@ export default function SalaPage() {
   useEffect(() => {
     if (snap?.phase === 'finished') clearResumeInfo();
   }, [snap?.phase]);
+
+  // Invitado (sin login): guardamos el resultado en el historial local del navegador.
+  // (Los logueados se persisten server-side en game_results.)
+  useEffect(() => {
+    if (snap?.phase !== 'finished' || user || savedMatchRef.current) return;
+    const me = snap.players.find((p) => p.id === sessionId);
+    if (!me) return;
+    savedMatchRef.current = true;
+    getGuestId(); // asegura identidad de invitado
+    saveGuestMatch({
+      topic: snap.topic,
+      score: me.score,
+      rank: snap.players.findIndex((p) => p.id === sessionId) + 1,
+      totalPlayers: snap.players.length,
+      totalQuestions: snap.totalQuestions,
+    });
+  }, [snap, user, sessionId]);
 
   async function attemptReconnect() {
     const token = tokenRef.current;
