@@ -86,10 +86,14 @@ export function createKahootRoom(opts: {
   topic: string;
   difficulty: string;
   audience?: string;
+  /** Cantidad de preguntas (default 5). */
+  count?: number;
+  /** Segundos por pregunta (default 20). */
+  questionSeconds?: number;
   /** JWT de Supabase para atribuir el resultado a la cuenta (si está logueado). */
   accessToken?: string;
 }): Promise<Room> {
-  return getClient().create('kahoot', { ...opts, count: 5 });
+  return getClient().create('kahoot', { count: 5, ...opts });
 }
 
 export function joinKahootRoom(
