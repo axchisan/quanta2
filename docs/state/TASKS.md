@@ -209,7 +209,7 @@
 ### T017 — Investigación de diseño & assets (benchmark de productos similares)
 
 - **Owner:** ui-web
-- **Status:** pending
+- **Status:** review (2026-06-15) — rama `feat/ui-T017-design-benchmark`. Dossier completo (8 sitios + síntesis + design system v2 + spec de avatares + plan de assets + references + tools). **Nota:** WebSearch/WebFetch denegados en la sesión → análisis desde conocimiento documentado (HEX aprox.); script Playwright listo para pase en vivo. Recomendación clave de avatares: **Rive (State Machine) + Lottie/confetti**. Desbloquea T022.
 - **Priority:** P1 (fundación de pulido)
 - **Sprint:** 2/3
 - **BlockedBy:** —
