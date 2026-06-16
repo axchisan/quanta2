@@ -33,6 +33,8 @@ const AUDIENCES = [
   { label: 'Secundaria', v: 'secundaria', hint: 'Bachillerato' },
   { label: 'Universidad', v: 'universidad', hint: 'Profesional' },
 ] as const;
+const COUNTS = [3, 5, 10] as const;
+const SECONDS = [10, 20, 30] as const;
 const NICK_KEY = 'quanta:nickname';
 
 /** Token de Supabase del usuario logueado (para atribuir el resultado a su cuenta). */
@@ -58,6 +60,8 @@ export default function SalaPage() {
   const [customTopic, setCustomTopic] = useState('');
   const [audience, setAudience] = useState<'ninos' | 'secundaria' | 'universidad'>('secundaria');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  const [count, setCount] = useState<number>(5);
+  const [questionSeconds, setQuestionSeconds] = useState<number>(20);
   const [code, setCode] = useState('');
   const [resume, setResume] = useState<ResumeInfo | null>(null);
   const [now, setNow] = useState(0);
@@ -224,6 +228,8 @@ export default function SalaPage() {
           topic: effectiveTopic,
           difficulty,
           audience,
+          count,
+          questionSeconds,
           ...(accessToken ? { accessToken } : {}),
         }),
       );
@@ -348,6 +354,40 @@ export default function SalaPage() {
                 {d.label}
               </Button>
             ))}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-1">
+              <span className="text-muted-foreground text-xs">Preguntas</span>
+              <div className="flex gap-1">
+                {COUNTS.map((n) => (
+                  <Button
+                    key={n}
+                    type="button"
+                    size="sm"
+                    variant={n === count ? 'default' : 'outline'}
+                    onClick={() => setCount(n)}
+                  >
+                    {n}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div className="grid gap-1">
+              <span className="text-muted-foreground text-xs">Seg. por pregunta</span>
+              <div className="flex gap-1">
+                {SECONDS.map((s) => (
+                  <Button
+                    key={s}
+                    type="button"
+                    size="sm"
+                    variant={s === questionSeconds ? 'default' : 'outline'}
+                    onClick={() => setQuestionSeconds(s)}
+                  >
+                    {s}s
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
           <Button size="lg" disabled={!nickOk || busy} onClick={() => void create()}>
             {busy ? 'Conectando…' : 'Crear sala'}

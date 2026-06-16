@@ -66,6 +66,8 @@ interface KahootCreateOptions {
   difficulty?: string;
   audience?: string;
   count?: number;
+  /** Segundos por pregunta (se clampa a [5, 60]). */
+  questionSeconds?: number;
   /** JWT de Supabase del jugador logueado (opcional: invitados no lo envían). */
   accessToken?: string;
 }
@@ -79,6 +81,7 @@ export class KahootRoom extends Room<KahootState> {
   private difficulty = 'easy';
   private audience: TriviaAudience = 'secundaria';
   private count = 5;
+  private questionMs = QUESTION_MS;
   /** sessionId → user id de Supabase (solo jugadores logueados). Privado: no se sincroniza. */
   private readonly userIds = new Map<string, string>();
   /** sessionId → cantidad de respuestas correctas en la partida. */
@@ -98,6 +101,7 @@ export class KahootRoom extends Room<KahootState> {
     this.difficulty = options.difficulty ?? 'easy';
     this.audience = normalizeAudience(options.audience);
     this.count = Math.min(Math.max(options.count ?? 5, 1), 10);
+    this.questionMs = Math.min(Math.max(options.questionSeconds ?? 20, 5), 60) * 1000;
 
     this.onMessage('start', (client) => this.handleStart(client));
     this.onMessage('answer', (client, message: { index?: number }) =>
@@ -235,13 +239,13 @@ export class KahootRoom extends Room<KahootState> {
     this.state.correctIndex = -1;
     this.state.phase = 'question';
     this.questionStartedAt = Date.now();
-    this.state.deadline = this.questionStartedAt + QUESTION_MS;
+    this.state.deadline = this.questionStartedAt + this.questionMs;
     this.state.players.forEach((p) => {
       p.answered = false;
       p.lastGain = 0;
     });
     this.clock.clear();
-    this.clock.setTimeout(() => this.endQuestion(), QUESTION_MS);
+    this.clock.setTimeout(() => this.endQuestion(), this.questionMs);
   }
 
   private handleAnswer(client: Client, message: { index?: number }): void {
@@ -254,7 +258,7 @@ export class KahootRoom extends Room<KahootState> {
     player.answered = true;
     if (message.index === q.correctIndex) {
       const elapsed = Date.now() - this.questionStartedAt;
-      const timeBonus = Math.max(0, Math.round(BASE_POINTS * (1 - elapsed / QUESTION_MS)));
+      const timeBonus = Math.max(0, Math.round(BASE_POINTS * (1 - elapsed / this.questionMs)));
       const gain = BASE_POINTS + timeBonus;
       player.score += gain;
       player.lastGain = gain;

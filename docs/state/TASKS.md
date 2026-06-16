@@ -332,10 +332,15 @@
 
 ### T023 — Personalización avanzada de partidas
 
-- **Owner:** ui-web / backend-realtime · **Status:** pending · **Priority:** P2 · **Sprint:** 3
-- **Description:** Más ejes ajustables: cantidad de preguntas, tiempo por pregunta, materia
-  (física/química/mixto), modo de juego, y ampliar audiencias/dominios. Construye sobre la base
-  de personalización de T019 (tema libre + audiencia).
+- **Owner:** ui-web / backend-realtime · **Status:** review (2026-06-15) — rama `feat/backend-realtime-T023-personalizacion-avanzada`
+- **Priority:** P2 · **Sprint:** 3
+- **Description:** Ejes ajustables al crear la sala: **cantidad de preguntas** (3/5/10) y
+  **segundos por pregunta** (10/20/30, clamp server-side [5,60]). El server usa `questionMs`
+  por sala (afecta deadline + timeBonus). Construye sobre la base de T019 (tema libre + audiencia).
+- **Acceptance:** `lint/typecheck/test/build` verdes (game-server 5); las opciones se pasan en
+  `create` y el server las clampa. Pendiente prueba humana.
+- **Notes:** Materia (física/química/mixto) y modo de juego quedan para una iteración futura
+  (hoy el tema libre + presets ya cubre la mayoría).
 
 ### T024 — Validación de coherencia de respuestas IA
 
