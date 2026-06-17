@@ -10,6 +10,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary text-primary-foreground shadow-soft hover:brightness-105',
+        // Botón 3D "press-down" (design system v2): sombra sólida que colapsa al presionar.
+        solid3d:
+          'bg-primary text-primary-foreground shadow-[0_4px_0_0_hsl(var(--primary-depth))] hover:brightness-105 active:translate-y-1 active:shadow-[0_1px_0_0_hsl(var(--primary-depth))]',
         secondary: 'bg-secondary text-secondary-foreground hover:brightness-105',
         accent: 'bg-accent text-accent-foreground shadow-soft hover:brightness-105',
         outline: 'border-border bg-card text-foreground hover:bg-muted border-2',
