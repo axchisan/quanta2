@@ -209,7 +209,7 @@
 ### T017 — Investigación de diseño & assets (benchmark de productos similares)
 
 - **Owner:** ui-web
-- **Status:** review (2026-06-15) — rama `feat/ui-T017-design-benchmark`. Dossier completo (8 sitios + síntesis + design system v2 + spec de avatares + plan de assets + references + tools). **Nota:** WebSearch/WebFetch denegados en la sesión → análisis desde conocimiento documentado (HEX aprox.); script Playwright listo para pase en vivo. Recomendación clave de avatares: **Rive (State Machine) + Lottie/confetti**. Desbloquea T022.
+- **Status:** done (2026-06-15, #19) — rama `feat/ui-T017-design-benchmark`. Dossier completo (8 sitios + síntesis + design system v2 + spec de avatares + plan de assets + references + tools). **Nota:** WebSearch/WebFetch denegados en la sesión → análisis desde conocimiento documentado (HEX aprox.); script Playwright listo para pase en vivo. Recomendación clave de avatares: **Rive (State Machine) + Lottie/confetti**. Desbloquea T022.
 - **Priority:** P1 (fundación de pulido)
 - **Sprint:** 2/3
 - **BlockedBy:** —
@@ -234,7 +234,7 @@
 ### T018 — Persistir resultados de sala Kahoot (Fase 2)
 
 - **Owner:** backend-realtime / ui-web
-- **Status:** review (2026-06-15) — rama `feat/backend-realtime-T018-persist-kahoot-results`
+- **Status:** done (2026-06-15, #13) — rama `feat/backend-realtime-T018-persist-kahoot-results`
 - **Priority:** P1 (Fase 2)
 - **Sprint:** 2
 - **BlockedBy:** —
@@ -259,7 +259,7 @@
 ### T019 — Salas: IA confiable (Groq) + personalización + reconexión persistente (Fase 2)
 
 - **Owner:** ai-gateway / backend-realtime / ui-web
-- **Status:** review (2026-06-15) — rama `feat/backend-realtime-T019-salas-ia-personalizacion`
+- **Status:** done (2026-06-15, #14) — rama `feat/backend-realtime-T019-salas-ia-personalizacion`
 - **Priority:** P0 (Fase 2 — desbloquea el bug de generación)
 - **Sprint:** 2
 - **BlockedBy:** —
@@ -293,7 +293,7 @@
 
 ### T020 — Códigos de sala estilo Kahoot (6 caracteres + auto-formato)
 
-- **Owner:** backend-realtime / ui-web · **Status:** review (2026-06-15) — rama `feat/backend-realtime-T020-codigos-sala-cortos`
+- **Owner:** backend-realtime / ui-web · **Status:** done (2026-06-15, #16) — rama `feat/backend-realtime-T020-codigos-sala-cortos`
 - **Priority:** P1 · **Sprint:** 2/3
 - **Description:** `roomId` corto de **6 caracteres** estilo Kahoot (alfabeto sin ambiguos
   `0/O/1/I/L`), mostrado/escrito como `ABC-DEF`. Colyseus 0.16 permite reemplazar `this.roomId`
@@ -307,7 +307,7 @@
 
 ### T021 — Sesiones de invitado persistentes (browser-based)
 
-- **Owner:** ui-web · **Status:** review (2026-06-15) — rama `feat/ui-web-T021-sesiones-invitado`
+- **Owner:** ui-web · **Status:** done (2026-06-15, #17) — rama `feat/ui-web-T021-sesiones-invitado`
 - **Priority:** P1 · **Sprint:** 3
 - **Description:** Para usuarios **sin login**, identidad de invitado estable en el navegador
   (`quanta:guest-id`) e **historial local de partidas** (`quanta:guest-history`, máx 20). Al
@@ -332,7 +332,7 @@
 
 ### T023 — Personalización avanzada de partidas
 
-- **Owner:** ui-web / backend-realtime · **Status:** review (2026-06-15) — rama `feat/backend-realtime-T023-personalizacion-avanzada`
+- **Owner:** ui-web / backend-realtime · **Status:** done (2026-06-15, #18) — rama `feat/backend-realtime-T023-personalizacion-avanzada`
 - **Priority:** P2 · **Sprint:** 3
 - **Description:** Ejes ajustables al crear la sala: **cantidad de preguntas** (3/5/10) y
   **segundos por pregunta** (10/20/30, clamp server-side [5,60]). El server usa `questionMs`
@@ -342,9 +342,29 @@
 - **Notes:** Materia (física/química/mixto) y modo de juego quedan para una iteración futura
   (hoy el tema libre + presets ya cubre la mayoría).
 
+### T025 — Fase B pulido: Design System v2 (tokens) + Quark animado (Fase 0)
+
+- **Owner:** ui-web · **Status:** review (2026-06-16) — rama `feat/ui-T025-design-system-v2-quark`
+- **Priority:** P1 (primer pulido derivado de T017) · **Sprint:** 3
+- **BlockedBy:** T017 (cerrada)
+- **Description:** Primer slice de pulido del dossier T017, **sin deps nuevas**:
+  - **Design system v2 en `@quanta/ui/tokens.css`:** tokens semánticos de gamificación
+    (`--success/--streak/--xp/--info`), tiers de rareza, `--primary-depth`, `--shadow-pop`,
+    sistema de motion (`--ease-out/--ease-spring`) + keyframes de la mascota + bloque
+    `prefers-reduced-motion`. Mapeo en `@theme` → utilidades `bg-success`, `text-streak`, etc.
+  - **Botón 3D "press-down"** como variante `solid3d` del `Button`.
+  - **Quark (Fase 0):** `components/quark.tsx` — el `AtomMascot` evoluciona a mascota con
+    **estados** (`idle/thinking/correct/wrong/celebrate`) animados con SVG+CSS y cara modular
+    (mouth/eye swap). Integrado en `ResultPanel` (acierto/error), landing (idle) y podio de
+    `/sala` (celebrate). Respeta `prefers-reduced-motion`.
+- **Acceptance:** `lint/typecheck/test/build` verdes; utilidades + keyframes presentes en el CSS
+  compilado. Pendiente verificación visual humana en prod.
+- **Notes:** Siguiente en Fase B: **Quark en Rive** (State Machine, T-pulido-C) + color+forma en
+  respuestas + coleccionables. Ver `asset-production-plan.md`.
+
 ### T024 — Validación de coherencia de respuestas IA
 
-- **Owner:** ai-gateway · **Status:** review (2026-06-15) — rama `feat/ai-gateway-T024-coherencia-respuestas`
+- **Owner:** ai-gateway · **Status:** done (2026-06-15, #15) — rama `feat/ai-gateway-T024-coherencia-respuestas`
 - **Priority:** P1 · **Sprint:** 2/3
 - **Description:** El LLM a veces devuelve un `correctIndex` que **no coincide** con su propia
   explicación (visto con Groq y Gemini). **Solución (sin llamadas extra):** el prompt ahora pide

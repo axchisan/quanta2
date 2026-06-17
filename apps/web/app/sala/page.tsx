@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { Room } from 'colyseus.js';
 import { Badge, Button, Card, Input } from '@quanta/ui';
 import { playSfx } from '@/lib/audio/sfx';
+import { Quark } from '@/components/quark';
 import { useAuth } from '@/lib/auth/use-auth';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import {
@@ -534,6 +535,9 @@ export default function SalaPage() {
 
       {snap.phase === 'reveal' || snap.phase === 'finished' ? (
         <Card>
+          {snap.phase === 'finished' ? (
+            <Quark state="celebrate" className="text-primary mx-auto mb-1 block h-16 w-16" />
+          ) : null}
           <p className="font-display mb-2 text-center text-xl font-bold">
             {snap.phase === 'finished' ? '🏆 Resultado final' : 'Tabla de posiciones'}
           </p>

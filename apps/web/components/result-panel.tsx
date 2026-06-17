@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Button } from '@quanta/ui';
-import { AtomMascot } from '@/components/atom-mascot';
+import { Quark } from '@/components/quark';
 import { playSfx } from '@/lib/audio/sfx';
 
 interface ResultPanelProps {
@@ -31,18 +31,19 @@ export function ResultPanel({
   return (
     <div
       className={`rounded-lg border-2 p-5 ${
-        isCorrect ? 'border-primary/40 bg-primary/10' : 'border-destructive/40 bg-destructive/10'
+        isCorrect ? 'border-success/40 bg-success/10' : 'border-destructive/40 bg-destructive/10'
       }`}
     >
       <div className="flex items-center gap-3">
-        <AtomMascot
-          className={`h-14 w-14 shrink-0 ${isCorrect ? 'text-primary animate-bounce' : 'text-destructive'}`}
+        <Quark
+          state={isCorrect ? 'correct' : 'wrong'}
+          className={`h-14 w-14 shrink-0 ${isCorrect ? 'text-success' : 'text-destructive'}`}
         />
         <div>
           <p className="font-display text-2xl font-extrabold">
             {isCorrect ? '¡Correcto!' : 'Casi…'}
           </p>
-          {isCorrect ? <p className="text-primary font-bold">+{score} puntos</p> : null}
+          {isCorrect ? <p className="text-success font-bold">+{score} puntos</p> : null}
         </div>
       </div>
       {extra ? <div className="mt-3 text-sm">{extra}</div> : null}

@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { Badge, Button, Card } from '@quanta/ui';
-import { AtomMascot } from '@/components/atom-mascot';
+import { Quark } from '@/components/quark';
 import { siteConfig } from '@/app/lib/site';
 
 export default function HomePage() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 py-8 text-center">
-      <AtomMascot className="text-primary h-24 w-24 drop-shadow-sm" />
+      <Quark state="idle" className="text-primary h-24 w-24 drop-shadow-sm" />
 
       <div>
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl">{siteConfig.name}</h1>
@@ -15,7 +15,7 @@ export default function HomePage() {
         </p>
       </div>
 
-      <Button asChild size="lg" className="text-xl">
+      <Button asChild variant="solid3d" size="lg" className="text-xl">
         <Link href="/jugar">▶ Empezá a jugar</Link>
       </Button>
 

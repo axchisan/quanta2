@@ -40,6 +40,18 @@
 - **2026-06-15 — backend (T015):** Sala Kahoot sobre **Colyseus** (ADR-0004), no Supabase Realtime — estado authoritative para anti-cheat. El server genera las preguntas con Gemini (el game-server tiene `@quanta/ai-gateway` + `GEMINI_API_KEY`), **en background** porque `onCreate` async bloquearía la respuesta de matchmaking (timeout → socket hang up); un flag `ready` avisa cuando están. La sala usa el **`roomId` de Colyseus como código compartible** (no se reusan las salas Supabase de T008, que quedan legacy). `correctIndex` se mantiene en -1 en el state sincronizado durante la pregunta y solo se setea en el reveal (anti-cheat). El lobby de T008 (`/room`) queda como legacy; la landing apunta a `/sala` (Kahoot real).
 - **2026-06-15 — infra/web (T012):** Auth con **Google OAuth** (no Magic Link: el Supabase no tiene SMTP; no email+password: ADR-0005). Habilitado en el Supabase self-hosted agregando `GOTRUE_EXTERNAL_GOOGLE_*` como env vars del servicio (el `auth` usa `env_file: .env`, así que se inyectan al contenedor) + `ADDITIONAL_REDIRECT_URLS` → `GOTRUE_URI_ALLOW_LIST` para permitir el redirect a la app. Atribución de intentos: el cliente manda el JWT en `Authorization`, la ruta lo verifica con `auth.getUser(token)` (service role) y guarda `user_id`. "Mis puntajes" lee directo con el cliente browser + RLS `auth.uid()` (no API route). Sesión client-side en localStorage (`@supabase/supabase-js`, sin `@supabase/ssr` para MVP).
 
+- **2026-06-16 — ui-web (T025):** Arranque de la Fase B de pulido (deriva de T017), **sin deps nuevas**.
+  Design system v2 en `@quanta/ui/tokens.css`: tokens semánticos (`--success/--streak/--xp/--info`),
+  tiers de rareza, `--primary-depth` (sombra del botón 3D), `--shadow-pop`, `--ease-out/--ease-spring`,
+  keyframes de la mascota y bloque `prefers-reduced-motion`; mapeo en `@theme` → utilidades
+  `bg-success`/`text-streak`/etc. Botón **`solid3d`** (press-down) como variante nueva (no cambia el
+  default). **Quark Fase 0** (`apps/web/components/quark.tsx`): el `AtomMascot` evoluciona a mascota con
+  estados (`idle/thinking/correct/wrong/celebrate`) animados con SVG+CSS y cara modular (mouth/eye swap),
+  integrado en `ResultPanel`, landing (idle) y podio de `/sala` (celebrate). Se eligió SVG+CSS como
+  **puente** (envío rápido, valida estados) antes de invertir en **Rive** (la evolución recomendada en
+  `avatar-system-spec.md` §4, queda para T-pulido-C). El `AtomMascot` estático se conserva como marca en
+  el header del layout.
+
 - **2026-06-15 — ui-web (T017):** Cerrado el dossier de benchmark de diseño (`docs/research/design-benchmark/`):
   8 sitios analizados (Kahoot, Duolingo, Quizizz, Blooket, Gimkit, Brilliant, Khan Academy, Prodigy) +
   SYNTHESIS + design system v2 + avatar-system-spec + asset-production-plan + references + script Playwright.

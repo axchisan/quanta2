@@ -43,6 +43,25 @@
   --ring: 252 84% 71%;
 
   --radius: 1.25rem;
+
+  /* ── Design system v2 (T017): semántica de gamificación ───────────────── */
+  --success: 152 62% 46%; /* verde "acierto" (legible para feedback) */
+  --success-foreground: 0 0% 100%;
+  --streak: 28 95% 58%; /* naranja "racha/fuego" */
+  --streak-foreground: 0 0% 100%;
+  --xp: 43 96% 56%; /* ámbar "XP/recompensa/monedas" */
+  --xp-foreground: 36 60% 22%;
+  --info: 205 90% 56%; /* azul "información/pista" */
+  --info-foreground: 0 0% 100%;
+
+  /* Profundidad para el botón 3D "press-down" (sombra sólida sin blur) */
+  --primary-depth: 252 55% 56%;
+
+  /* Tiers de rareza para coleccionables (avatar-system-spec) */
+  --tier-common: 220 12% 65%;
+  --tier-rare: 205 90% 56%;
+  --tier-epic: 270 80% 64%;
+  --tier-legendary: 43 96% 54%;
 }
 
 @theme inline {
@@ -66,6 +85,16 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
+  /* Semántica de gamificación (v2) → utilidades bg-success, text-streak, etc. */
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-streak: hsl(var(--streak));
+  --color-streak-foreground: hsl(var(--streak-foreground));
+  --color-xp: hsl(var(--xp));
+  --color-xp-foreground: hsl(var(--xp-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 0.4rem);
   --radius-sm: calc(var(--radius) - 0.7rem);
@@ -73,4 +102,101 @@
   /* Sombras suaves difusas (tinte lavanda) */
   --shadow-soft: 0 10px 30px -12px hsl(252 60% 55% / 0.28);
   --shadow-card: 0 4px 16px -6px hsl(252 50% 55% / 0.18);
+  --shadow-pop: 0 16px 40px -10px hsl(252 70% 55% / 0.35);
+
+  /* Sistema de motion (v2) */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Quark (mascota) — keyframes de estados (avatar-system-spec, Fase 0) ───── */
+@keyframes quark-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6%);
+  }
+}
+@keyframes quark-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes quark-pop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-16%) scale(1.08);
+  }
+}
+@keyframes quark-shake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-7%) rotate(-5deg);
+  }
+  60% {
+    transform: translateX(7%) rotate(5deg);
+  }
+}
+@keyframes quark-celebrate {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-20%) rotate(-7deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-10%) rotate(7deg);
+  }
+}
+
+.quark {
+  transform-origin: center;
+}
+.quark--idle {
+  animation: quark-float 3.4s ease-in-out infinite;
+}
+.quark--thinking {
+  animation: quark-float 1.8s ease-in-out infinite;
+}
+.quark--correct {
+  animation: quark-pop 0.6s var(--ease-spring) 1;
+}
+.quark--wrong {
+  animation: quark-shake 0.5s ease-in-out 1;
+}
+.quark--celebrate {
+  animation: quark-celebrate 0.9s var(--ease-spring) 2;
+}
+.quark__orbits {
+  transform-box: view-box;
+  transform-origin: 32px 32px;
+  animation: quark-orbit 9s linear infinite;
+}
+
+/* Accesibilidad: respetar prefers-reduced-motion (avatar-system-spec §8). */
+@media (prefers-reduced-motion: reduce) {
+  .quark,
+  .quark--idle,
+  .quark--thinking,
+  .quark--correct,
+  .quark--wrong,
+  .quark--celebrate,
+  .quark__orbits {
+    animation: none !important;
+  }
 }
