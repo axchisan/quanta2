@@ -342,9 +342,19 @@
 - **Notes:** Materia (física/química/mixto) y modo de juego quedan para una iteración futura
   (hoy el tema libre + presets ya cubre la mayoría).
 
+### T027 — Quark reacciona en la partida en vivo (/sala)
+
+- **Owner:** ui-web · **Status:** review (2026-06-17) — rama `feat/ui-T027-quark-en-vivo`
+- **Priority:** P2 (Fase B) · **Sprint:** 3
+- **BlockedBy:** T025 (Quark)
+- **Description:** En la tarjeta de pregunta de `/sala`, Quark reacciona en vivo: `thinking`
+  durante la pregunta y `correct`/`wrong` en el reveal según la respuesta del jugador (reuso del
+  personaje, avatar-system-spec §7). Sin deps nuevas.
+- **Acceptance:** `lint/typecheck/build` verdes. Pendiente verificación visual humana.
+
 ### T026 — Respuestas con color + forma (a11y estilo Kahoot)
 
-- **Owner:** ui-web · **Status:** review (2026-06-17) — rama `feat/ui-T026-respuestas-color-forma`
+- **Owner:** ui-web · **Status:** done (2026-06-17, #21) — rama `feat/ui-T026-respuestas-color-forma`
 - **Priority:** P2 (a11y, Fase B) · **Sprint:** 3
 - **BlockedBy:** T025 (tokens)
 - **Description:** Cada una de las 4 opciones de `/sala` lleva **color + forma** (▲◆●■) para que
