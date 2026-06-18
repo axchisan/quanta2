@@ -6,6 +6,7 @@ import type { Room } from 'colyseus.js';
 import { Badge, Button, Card, Input } from '@quanta/ui';
 import { playSfx } from '@/lib/audio/sfx';
 import { Quark } from '@/components/quark';
+import { AnswerShape } from '@/components/answer-shape';
 import { useAuth } from '@/lib/auth/use-auth';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import {
@@ -36,6 +37,8 @@ const AUDIENCES = [
 ] as const;
 const COUNTS = [3, 5, 10] as const;
 const SECONDS = [10, 20, 30] as const;
+// Color por opción (acompaña a la forma ▲◆●■). Clases completas (no dinámicas).
+const OPTION_TILES = ['bg-primary', 'bg-info', 'bg-streak', 'bg-success'] as const;
 const NICK_KEY = 'quanta:nickname';
 
 /** Token de Supabase del usuario logueado (para atribuir el resultado a su cuenta). */
@@ -505,9 +508,11 @@ export default function SalaPage() {
             const reveal = snap.phase === 'reveal';
             const isCorrect = reveal && i === snap.correctIndex;
             const isWrongPick = reveal && i === selected && i !== snap.correctIndex;
-            const base = 'rounded-xl border-2 px-4 py-3 text-left transition';
+            const dimmed = reveal && !isCorrect && !isWrongPick;
+            const base =
+              'flex items-center gap-3 rounded-xl border-2 px-3 py-3 text-left transition';
             const cls = isCorrect
-              ? 'border-primary bg-primary/15'
+              ? 'border-success bg-success/15'
               : isWrongPick
                 ? 'border-destructive bg-destructive/15'
                 : selected === i
@@ -519,9 +524,16 @@ export default function SalaPage() {
                 type="button"
                 disabled={snap.phase !== 'question' || selected !== null}
                 onClick={() => answer(i)}
-                className={`${base} ${cls}`}
+                className={`${base} ${cls} ${dimmed ? 'opacity-45' : ''}`}
               >
-                {opt}
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white ${OPTION_TILES[i] ?? 'bg-primary'}`}
+                >
+                  <AnswerShape index={i} className="h-4 w-4" />
+                </span>
+                <span className="flex-1">{opt}</span>
+                {isCorrect ? <span className="text-success font-bold">✓</span> : null}
+                {isWrongPick ? <span className="text-destructive font-bold">✗</span> : null}
               </button>
             );
           })}
