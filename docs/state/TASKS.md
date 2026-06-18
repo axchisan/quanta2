@@ -342,9 +342,21 @@
 - **Notes:** Materia (física/química/mixto) y modo de juego quedan para una iteración futura
   (hoy el tema libre + presets ya cubre la mayoría).
 
+### T026 — Respuestas con color + forma (a11y estilo Kahoot)
+
+- **Owner:** ui-web · **Status:** review (2026-06-17) — rama `feat/ui-T026-respuestas-color-forma`
+- **Priority:** P2 (a11y, Fase B) · **Sprint:** 3
+- **BlockedBy:** T025 (tokens)
+- **Description:** Cada una de las 4 opciones de `/sala` lleva **color + forma** (▲◆●■) para que
+  el color no sea el único canal (daltonismo) — patrón Kahoot. Componente `components/answer-shape.tsx`
+  + tile de color por índice (`bg-primary/info/streak/success`). En el reveal: la correcta se resalta
+  (✓ success), la elegida incorrecta (✗ destructive), el resto se atenúa.
+- **Acceptance:** `lint/typecheck/build` verdes; utilidades de color presentes en el CSS. Pendiente
+  verificación visual humana.
+
 ### T025 — Fase B pulido: Design System v2 (tokens) + Quark animado (Fase 0)
 
-- **Owner:** ui-web · **Status:** review (2026-06-16) — rama `feat/ui-T025-design-system-v2-quark`
+- **Owner:** ui-web · **Status:** done (2026-06-17, #20) — rama `feat/ui-T025-design-system-v2-quark`
 - **Priority:** P1 (primer pulido derivado de T017) · **Sprint:** 3
 - **BlockedBy:** T017 (cerrada)
 - **Description:** Primer slice de pulido del dossier T017, **sin deps nuevas**:
