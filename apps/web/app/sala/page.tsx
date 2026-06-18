@@ -498,8 +498,26 @@ export default function SalaPage() {
       {snap.phase === 'question' || snap.phase === 'reveal' ? (
         <Card className="grid gap-3">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {snap.phase === 'question' ? `${remaining}s` : 'Respuesta'}
+            <span className="flex items-center gap-2">
+              <Quark
+                state={
+                  snap.phase === 'reveal'
+                    ? selected === snap.correctIndex
+                      ? 'correct'
+                      : 'wrong'
+                    : 'thinking'
+                }
+                className={`h-8 w-8 ${
+                  snap.phase === 'reveal'
+                    ? selected === snap.correctIndex
+                      ? 'text-success'
+                      : 'text-destructive'
+                    : 'text-primary'
+                }`}
+              />
+              <span className="text-muted-foreground">
+                {snap.phase === 'question' ? `${remaining}s` : 'Respuesta'}
+              </span>
             </span>
             {me ? <span className="text-primary font-bold">{me.score} pts</span> : null}
           </div>
