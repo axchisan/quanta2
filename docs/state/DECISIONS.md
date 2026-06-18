@@ -40,6 +40,10 @@
 - **2026-06-15 — backend (T015):** Sala Kahoot sobre **Colyseus** (ADR-0004), no Supabase Realtime — estado authoritative para anti-cheat. El server genera las preguntas con Gemini (el game-server tiene `@quanta/ai-gateway` + `GEMINI_API_KEY`), **en background** porque `onCreate` async bloquearía la respuesta de matchmaking (timeout → socket hang up); un flag `ready` avisa cuando están. La sala usa el **`roomId` de Colyseus como código compartible** (no se reusan las salas Supabase de T008, que quedan legacy). `correctIndex` se mantiene en -1 en el state sincronizado durante la pregunta y solo se setea en el reveal (anti-cheat). El lobby de T008 (`/room`) queda como legacy; la landing apunta a `/sala` (Kahoot real).
 - **2026-06-15 — infra/web (T012):** Auth con **Google OAuth** (no Magic Link: el Supabase no tiene SMTP; no email+password: ADR-0005). Habilitado en el Supabase self-hosted agregando `GOTRUE_EXTERNAL_GOOGLE_*` como env vars del servicio (el `auth` usa `env_file: .env`, así que se inyectan al contenedor) + `ADDITIONAL_REDIRECT_URLS` → `GOTRUE_URI_ALLOW_LIST` para permitir el redirect a la app. Atribución de intentos: el cliente manda el JWT en `Authorization`, la ruta lo verifica con `auth.getUser(token)` (service role) y guarda `user_id`. "Mis puntajes" lee directo con el cliente browser + RLS `auth.uid()` (no API route). Sesión client-side en localStorage (`@supabase/supabase-js`, sin `@supabase/ssr` para MVP).
 
+- **2026-06-17 — ui-web (T027):** Quark reacciona en la partida multiplayer en vivo (`/sala`):
+  `thinking` durante la pregunta, `correct`/`wrong` en el reveal según la respuesta del jugador.
+  Reuso del personaje (avatar-system-spec §7), sin deps. Hace sentir viva la sala.
+
 - **2026-06-17 — ui-web (T026):** Accesibilidad de respuestas: las 4 opciones de `/sala` llevan
   **color + forma** (▲◆●■, `components/answer-shape.tsx`), nunca color solo (patrón Kahoot, ayuda a
   daltónicos). Color por índice con utilidades estáticas (`bg-primary/info/streak/success`, del design
