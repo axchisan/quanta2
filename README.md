@@ -1,8 +1,52 @@
 # Quanta
 
-Juego educativo interactivo de Física y Química con IA generativa, multiplayer y herramienta de creación de retos.
+Juego web y móvil para que estudiantes de colegio aprendan **Física y Química** resolviendo retos
+visuales, compitiendo en vivo con su curso y recibiendo explicaciones de una IA cuando se
+equivocan. Gratis, sin anuncios y pensado para clases en Colombia y Latinoamérica.
 
-Monorepo pnpm + Turborepo. Stack: TypeScript estricto · Next.js 15 · Phaser 3 · Supabase self-hosted · Colyseus · Gateway IA propio.
+Nació de un encargo sencillo: el profesor de mi hermana le pidió "un juego" para aprender Física y
+Química. Quanta es la versión en serio de esa idea.
+
+## Qué se puede jugar hoy
+
+| | |
+|---|---|
+| **Caída libre** | Simulación física en Phaser 3: predices cuánto tarda en caer un objeto según la altura y la gravedad, y lo ves caer |
+| **Balanceo de ecuaciones** | Ajustas coeficientes de una reacción química hasta que los átomos cuadran |
+| **Trivia con IA** | Preguntas generadas por un modelo (Gemini/Groq) con explicación del error, no solo "incorrecto" |
+| **Salas en vivo estilo Kahoot** | El profesor proyecta la sala, el curso entra con un código de 6 caracteres y compite en tiempo real; resiste reconexiones y cambio de anfitrión |
+| **Cuentas o invitado** | Entra con Google para guardar puntajes, o como invitado con historial local |
+
+En camino: el creador de retos con IA (que cualquiera pueda inventar un reto nuevo en minutos sin
+programar), modos cooperativos y torneos. Ver [`docs/02-roadmap.md`](docs/02-roadmap.md).
+
+## Cómo está hecho
+
+```
+                 ┌──────────────────────────┐
+  navegador ───▶ │ apps/web  · Next.js 15   │──┐   Phaser 3 (packages/game-engine)
+   / PWA         │ UI, retos y lobby        │  │
+                 └────────────┬─────────────┘  │
+                              │ WebSocket      │ HTTP
+                 ┌────────────▼─────────────┐  │   ┌─────────────────────────────┐
+                 │ apps/game-server         │  └──▶│ packages/ai-gateway         │
+                 │ Colyseus · salas con     │─────▶│ Gemini · Groq · OpenRouter  │
+                 │ autoridad en el servidor │      │ caché y cadena de respaldo  │
+                 └────────────┬─────────────┘      └─────────────────────────────┘
+                              │
+                 ┌────────────▼─────────────┐
+                 │ Supabase (self-hosted)   │  Postgres, auth y resultados
+                 └──────────────────────────┘
+```
+
+- **Las salas tienen autoridad en el servidor**: el puntaje lo calcula Colyseus, así que un ranking
+  no se puede falsificar desde las devtools.
+- **Gateway de IA propio** con varios proveedores y respaldo, para no depender de uno solo y vivir
+  dentro de los planes gratuitos.
+- **Monorepo pnpm + Turborepo** con TypeScript estricto, tipos compartidos y CI con lint, tipos y
+  pruebas. Desplegable con Docker en Coolify.
+- Se construyó en modo multiagente: cada área (motor, tiempo real, IA, UI) tiene su briefing en
+  [`docs/agents/`](docs/agents) y cada tarea entró por su propio PR.
 
 ## Requisitos
 
